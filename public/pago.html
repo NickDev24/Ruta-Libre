@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00C9A7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Ruta Libre">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+    <link rel="manifest" href="/manifest.json">
+    <title>Pagar Reserva - Ruta Libre | Procesamiento Seguro de Pagos | Transporte Ejecutivo Salta</title>
+    <meta name="description" content="Procesamiento seguro de pagos para reservas de transporte premium ejecutivo en Salta. Aceptamos tarjetas de crédito, débito y transferencias bancarias con encriptación SSL de 256 bits.">
+    <meta name="keywords" content="pagar reserva transporte Salta, pago seguro transporte ejecutivo Salta, procesar pago taxi VIP Salta, pago online traslados aeropuerto Salta, pago tarjeta transporte premium Salta, pago transferencia transporte corporativo Salta, pago seguro movilidad empresarial Salta, procesar pago chofer privado Salta, pago online alquiler autos lujo Salta, pago reserva servicio taxi Salta, pago seguro transporte turístico Salta, procesar pago traslados privados Salta, pago tarjeta movilidad ejecutiva Salta, pago transferencia transporte business Salta, pago online servicio transporte Salta, pago seguro movilidad corporativa Salta, procesar pago transporte VIP Salta, pago reserva chofer profesional Salta, pago tarjeta alquiler vehículos Salta, pago transferencia traslados ejecutivos Salta, pago online transporte aeropuerto Salta, pago seguro movilidad turística Salta, procesar pago servicio chofer Salta, pago tarjeta transporte corporativo Salta, pago transferencia movilidad empresarial Salta">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* 🎨 Paleta Profesional Moderna */
+            --primary-emerald: #00C9A7;
+            --primary-cyan: #00D4FF;
+            --accent-violet: #8B5CF6;
+            --accent-coral: #FF6F61;
+
+            /* Fondos */
+            --bg-primary: #0A0A0F;
+            --bg-secondary: #141419;
+            --bg-tertiary: #1E1E2E;
+            --glass-bg: rgba(20, 20, 25, 0.85);
+
+            /* Textos */
+            --text-primary: #FFFFFF;
+            --text-secondary: #E2E8F0;
+            --text-muted: #94A3B8;
+
+            /* Bordes y Sombras */
+            --border-primary: #334155;
+            --border-glow: rgba(0, 201, 167, 0.3);
+            --shadow-primary: rgba(0, 201, 167, 0.15);
+            --shadow-vibrant: rgba(139, 92, 246, 0.2);
+
+            /* Estados */
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Header Profesional */
+        .header {
+            position: sticky;
+            top: 0;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 201, 167, 0.1);
+            z-index: 100;
+        }
+
+        .nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-emerald), var(--primary-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand::before {
+            content: '🚗';
+            animation: logoPulse 3s ease-in-out infinite;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-cyan);
+        }
+
+        .admin-btn {
+            background: linear-gradient(135deg, var(--primary-emerald), var(--primary-cyan));
+            color: var(--bg-primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px var(--shadow-primary);
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px var(--shadow-primary);
+        }
+
+        /* Contenedor Principal */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: calc(100vh - 100px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Título de Página */
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-emerald), var(--primary-cyan), var(--accent-violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        /* Tarjeta de Formulario */
+        .payment-card {
+            background: linear-gradient(135deg, var(--glass-bg), rgba(20, 20, 25, 0.6));
+            border: 1px solid var(--border-primary);
+            border-radius: 24px;
+            padding: 3rem;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0, 201, 167, 0.1);
+            animation: cardSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            display: block;
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-weight: 600;
+            color: var(--primary-cyan);
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            background: rgba(20, 20, 25, 0.8);
+            border: 2px solid var(--border-primary);
+            border-radius: 16px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 0 4px rgba(0, 201, 167, 0.1);
+        }
+
+        .form-input:invalid {
+            border-color: var(--error);
+        }
+
+        .form-input:valid {
+            border-color: var(--success);
+        }
+
+        .form-input[readonly] {
+            background: rgba(20, 20, 25, 0.5);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            background: rgba(20, 20, 25, 0.8);
+            border: 2px solid var(--border-primary);
+            border-radius: 16px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 0 4px rgba(0, 201, 167, 0.1);
+        }
+
+        /* Botón de Pago */
+        .submit-btn {
+            width: 100%;
+            padding: 1.5rem 2rem;
+            background: linear-gradient(135deg, var(--primary-emerald), var(--primary-cyan));
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 50px;
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px var(--shadow-primary);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Información de Seguridad */
+        .security-info {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .security-title {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-weight: 600;
+            color: var(--success);
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .security-text {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-tertiary);
+            padding: 2rem;
+            border-top: 1px solid var(--border-primary);
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .footer-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Animaciones */
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes cardSlideUp {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .payment-card {
+                padding: 2rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Estados de carga */
+        .loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid transparent;
+            border-top: 2px solid var(--primary-cyan);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="nav">
+            <div class="brand">Ruta Libre</div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Inicio</a>
+                <a href="/admin" class="admin-btn">Panel Admin</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Procesar Pago</h1>
+            <p class="page-subtitle">Complete los datos para procesar su pago de forma segura</p>
+        </div>
+
+        <div class="payment-card">
+            <form id="paymentForm">
+                <div class="form-group">
+                    <label for="reservaId" class="form-label">ID de Reserva</label>
+                    <input type="text" id="reservaId" name="reservaId" class="form-input" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="monto" class="form-label">Monto (ARS)</label>
+                    <input type="number" id="monto" name="monto" class="form-input" required min="0" step="0.01" placeholder="Ej: 15000.00">
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Correo Electrónico</label>
+                    <input type="email" id="email" name="email" class="form-input" required placeholder="tucorreo@ejemplo.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="metodo" class="form-label">Método de Pago</label>
+                    <select id="metodo" name="metodo" class="form-select">
+                        <option value="Transferencia">Transferencia Bancaria</option>
+                        <option value="Tarjeta">Tarjeta de Crédito/Débito</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    💳 Procesar Pago Seguro
+                </button>
+            </form>
+
+            <div class="security-info">
+                <div class="security-title">🔒 Pago 100% Seguro</div>
+                <div class="security-text">
+                    Todos los pagos son procesados con encriptación SSL de 256 bits.<br>
+                    Su información financiera está completamente protegida.
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-text">
+                © 2025 Ruta Libre. Transporte premium ejecutivo en Salta.
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Obtener parámetros de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const reservaId = urlParams.get('reservaId');
+
+        // Rellenar campos automáticamente
+        document.getElementById('reservaId').value = reservaId || '';
+
+        // Manejar envío del formulario
+        document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const form = document.getElementById('paymentForm');
+
+            // Validaciones
+            if (!document.getElementById('reservaId').value) {
+                alert('❌ Falta el ID de la reserva. Regrese al enlace de pago.');
+                return;
+            }
+
+            const montoVal = document.getElementById('monto').value.trim();
+            if (!montoVal || isNaN(Number(montoVal)) || Number(montoVal) <= 0) {
+                alert('❌ El monto debe ser un número mayor a 0.');
+                document.getElementById('monto').focus();
+                return;
+            }
+
+            const emailVal = document.getElementById('email').value.trim();
+            if (!emailVal) {
+                alert('❌ Ingrese su correo electrónico.');
+                document.getElementById('email').focus();
+                return;
+            }
+
+            // Preparar datos
+            const paymentData = {
+                reservaId: document.getElementById('reservaId').value,
+                monto: Number(montoVal),
+                email: emailVal,
+                metodo: document.getElementById('metodo').value,
+            };
+
+            // Mostrar estado de carga
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+            submitBtn.textContent = 'Procesando...';
+
+            try {
+                // Enviar solicitud de pago
+                const response = await fetch('/api/pagos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(paymentData)
+                });
+
+                const data = await response.json();
+
+                if (data.ok) {
+                    alert('✅ Pago registrado exitosamente. Quedará pendiente hasta su aprobación. Le notificaremos por WhatsApp.');
+                    window.location.href = '/';
+                } else {
+                    throw new Error(data.error || 'No se pudo procesar el pago.');
+                }
+
+            } catch (error) {
+                console.error('Error en pago:', error);
+                alert(`❌ Error: ${error.message}`);
+            } finally {
+                // Restaurar botón
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
+                submitBtn.innerHTML = '💳 Procesar Pago Seguro';
+            }
+        });
+
+        // Formateo automático del monto
+        document.getElementById('monto').addEventListener('input', (e) => {
+            let value = e.target.value.replace(/[^0-9.]/g, '');
+            const parts = value.split('.');
+            if (parts.length > 2) {
+                value = parts[0] + '.' + parts.slice(1).join('');
+            }
+            e.target.value = value;
+        });
+
+        // Validación en tiempo real
+        document.getElementById('email').addEventListener('blur', (e) => {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (e.target.value && !emailRegex.test(e.target.value)) {
+                e.target.setCustomValidity('Ingrese un correo electrónico válido');
+            } else {
+                e.target.setCustomValidity('');
+            }
+        });
+    </script>
+</body>
+</html>

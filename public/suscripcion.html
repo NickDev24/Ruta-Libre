@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00C9A7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Ruta Libre">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+    <link rel="manifest" href="/manifest.json">
+    <title>Suscripción Premium - Ruta Libre | Planes de Transporte Ejecutivo Salta | Membresías Corporativas</title>
+    <meta name="description" content="Suscríbete a planes premium de transporte ejecutivo en Salta. Membresías corporativas, empresariales y turísticas con beneficios exclusivos, tarifas preferenciales y atención VIP 24/7.">
+    <meta name="keywords" content="suscripción transporte ejecutivo Salta, planes premium movilidad corporativa Salta, membresía taxi VIP Salta, suscripción traslados aeropuerto Salta, planes transporte empresarial Salta, membresía chofer privado Salta, suscripción alquiler autos lujo Salta, planes movilidad ejecutiva Salta, membresía transporte corporativo Salta, suscripción servicio taxi Salta, planes alquiler vehículos premium Salta, membresía viajes empresariales Salta, suscripción movilidad corporativa NOA, planes transporte turístico Salta, membresía traslados privados Salta, suscripción servicio chofer Salta, planes transporte VIP Salta, membresía movilidad ejecutiva NOA, suscripción alquiler autos ejecutivos Salta, planes transporte business Salta, membresía servicio transporte Salta, suscripción movilidad empresarial Salta, planes traslados corporativos Salta, membresía taxi aeropuerto Salta, suscripción alquiler vehículos lujo Salta, planes transporte ejecutivo NOA, membresía movilidad turística NOA, suscripción servicio taxi premium Salta, planes chofer profesional Salta, membresía transporte privado ejecutivo Salta, suscripción movilidad corporativa Argentina, planes transporte turístico NOA, membresía traslados aeropuerto VIP Salta, suscripción alquiler autos turismo lujo Salta, planes servicio transporte premium Salta, membresía movilidad business ejecutiva Salta, suscripción transporte empresarial corporativo Salta, planes taxi aeropuerto VIP Salta, membresía chofer privado aeropuerto VIP Salta, suscripción traslados ejecutivos aeropuerto VIP Salta, planes alquiler vehículos corporativos lujo Salta, membresía movilidad ejecutiva corporativa premium Salta">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* 🎨 Paleta Profesional Moderna */
+            --primary-emerald: #00C9A7;
+            --primary-cyan: #00D4FF;
+            --accent-violet: #8B5CF6;
+            --accent-coral: #FF6F61;
+
+            /* Fondos */
+            --bg-primary: #0A0A0F;
+            --bg-secondary: #141419;
+            --bg-tertiary: #1E1E2E;
+            --glass-bg: rgba(20, 20, 25, 0.85);
+
+            /* Textos */
+            --text-primary: #FFFFFF;
+            --text-secondary: #E2E8F0;
+            --text-muted: #94A3B8;
+
+            /* Bordes y Sombras */
+            --border-primary: #334155;
+            --border-glow: rgba(0, 201, 167, 0.3);
+            --shadow-primary: rgba(0, 201, 167, 0.15);
+            --shadow-vibrant: rgba(139, 92, 246, 0.2);
+
+            /* Estados */
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Header Profesional */
+        .header {
+            position: sticky;
+            top: 0;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 201, 167, 0.1);
+            z-index: 100;
+        }
+
+        .nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-emerald), var(--primary-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand::before {
+            content: '🚗';
+            animation: logoPulse 3s ease-in-out infinite;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-cyan);
+        }
+
+        .admin-btn {
+            background: linear-gradient(135deg, var(--primary-emerald), var(--primary-cyan));
+            color: var(--bg-primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px var(--shadow-primary);
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px var(--shadow-primary);
+        }
+
+        /* Contenedor Principal */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: calc(100vh - 100px);
+        }
+
+        /* Título de Página */
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: clamp(2.5rem, 4vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-emerald), var(--primary-cyan), var(--accent-violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        /* Tarjeta de Suscripción */
+        .subscription-card {
+            background: linear-gradient(135deg, var(--glass-bg), rgba(20, 20, 25, 0.6));
+            border: 1px solid var(--border-primary);
+            border-radius: 24px;
+            padding: 3rem;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0, 201, 167, 0.1);
+            animation: cardSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Pasos del Formulario */
+        .step {
+            display: none;
+            animation: stepFadeIn 0.5s ease-in-out;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        .step-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .step-title {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--primary-cyan);
+            margin-bottom: 0.5rem;
+        }
+
+        .step-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Formularios */
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            display: block;
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-weight: 600;
+            color: var(--primary-cyan);
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            background: rgba(20, 20, 25, 0.8);
+            border: 2px solid var(--border-primary);
+            border-radius: 16px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 0 4px rgba(0, 201, 167, 0.1);
+        }
+
+        .form-input:invalid {
+            border-color: var(--error);
+        }
+
+        .form-input:valid {
+            border-color: var(--success);
+        }
+
+        .form-input[readonly] {
+            background: rgba(20, 20, 25, 0.5);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* Campos Dinámicos */
+        .dynamic-fields {
+            background: rgba(20, 20, 25, 0.4);
+            border: 1px solid var(--border-primary);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .dynamic-fields.show {
+            display: block;
+            animation: fieldsSlideDown 0.3s ease-out;
+        }
+
+        /* Navegación de Pasos */
+        .step-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+
+        .step-btn {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--border-primary);
+            border-radius: 50px;
+            background: transparent;
+            color: var(--text-primary);
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .step-btn:hover {
+            border-color: var(--primary-cyan);
+            background: rgba(0, 201, 167, 0.1);
+        }
+
+        .step-btn-primary {
+            background: linear-gradient(135deg, var(--primary-emerald), var(--primary-cyan));
+            color: var(--bg-primary);
+            border-color: var(--primary-cyan);
+        }
+
+        .step-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--shadow-primary);
+        }
+
+        /* Indicadores de Pasos */
+        .step-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .step-indicator {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--border-primary);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .step-indicator.active {
+            background: linear-gradient(135deg, var(--primary-emerald), var(--primary-cyan));
+            color: var(--bg-primary);
+            box-shadow: 0 0 20px var(--shadow-primary);
+        }
+
+        .step-indicator.completed {
+            background: var(--success);
+            color: white;
+        }
+
+        /* Información de Seguridad */
+        .security-info {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .security-title {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-weight: 600;
+            color: var(--success);
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .security-text {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-tertiary);
+            padding: 2rem;
+            border-top: 1px solid var(--border-primary);
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .footer-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Animaciones */
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes cardSlideUp {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes stepFadeIn {
+            0% { opacity: 0; transform: translateX(20px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes fieldsSlideDown {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Estados de carga */
+        .loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid transparent;
+            border-top: 2px solid var(--primary-cyan);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .subscription-card {
+                padding: 2rem;
+            }
+
+            .step-navigation {
+                flex-direction: column;
+            }
+
+            .step-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="nav">
+            <div class="brand">Ruta Libre</div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Inicio</a>
+                <a href="/admin" class="admin-btn">Panel Admin</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Suscripción Premium</h1>
+            <p class="page-subtitle">Elige tu plan y comienza a disfrutar de beneficios exclusivos</p>
+        </div>
+
+        <div class="subscription-card">
+            <!-- Indicadores de Pasos -->
+            <div class="step-indicators">
+                <div class="step-indicator active" id="indicator-1">1</div>
+                <div class="step-indicator" id="indicator-2">2</div>
+                <div class="step-indicator" id="indicator-3">3</div>
+                <div class="step-indicator" id="indicator-4">4</div>
+            </div>
+
+            <!-- Paso 1: Tipo de cliente -->
+            <div class="step active" id="step1">
+                <div class="step-header">
+                    <h2 class="step-title">¿Qué tipo de cliente eres?</h2>
+                    <p class="step-subtitle">Selecciona la opción que mejor describe tu perfil</p>
+                </div>
+
+                <div class="form-section">
+                    <label for="tipoCliente" class="form-label">Tipo de Cliente</label>
+                    <select id="tipoCliente" class="form-select">
+                        <option value="">Seleccionar...</option>
+                        <option value="turista">🌍 Turista Internacional</option>
+                        <option value="minero">⛏️ Administrativo Minero</option>
+                        <option value="empresa">🏢 Empresa Corporativa</option>
+                        <option value="urbano">🚗 Urbano Ejecutivo</option>
+                    </select>
+                </div>
+
+                <div class="step-navigation">
+                    <button class="step-btn step-btn-primary" onclick="nextStep(2)">Continuar →</button>
+                </div>
+            </div>
+
+            <!-- Paso 2: Datos personales -->
+            <div class="step" id="step2">
+                <div class="step-header">
+                    <h2 class="step-title">Información Personal</h2>
+                    <p class="step-subtitle">Completa tus datos para personalizar tu experiencia</p>
+                </div>
+
+                <div class="form-section">
+                    <label for="nombre" class="form-label">Nombre Completo</label>
+                    <input type="text" id="nombre" class="form-input" required placeholder="Tu nombre y apellido">
+                </div>
+
+                <div class="form-section">
+                    <label for="email" class="form-label">Correo Electrónico</label>
+                    <input type="email" id="email" class="form-input" required placeholder="tucorreo@ejemplo.com">
+                </div>
+
+                <div class="form-section">
+                    <label for="telefono" class="form-label">Teléfono WhatsApp</label>
+                    <input type="tel" id="telefono" class="form-input" required placeholder="549XXXXXXXXXX">
+                </div>
+
+                <div id="dynamic-fields" class="dynamic-fields">
+                    <!-- Campos dinámicos se generan aquí -->
+                </div>
+
+                <div class="form-section">
+                    <label for="plan" class="form-label">Plan Seleccionado</label>
+                    <input type="text" id="plan" class="form-input" readonly>
+                </div>
+
+                <div class="step-navigation">
+                    <button class="step-btn" onclick="prevStep(1)">← Anterior</button>
+                    <button class="step-btn step-btn-primary" onclick="nextStep(3)">Continuar →</button>
+                </div>
+            </div>
+
+            <!-- Paso 3: Información de pago -->
+            <div class="step" id="step3">
+                <div class="step-header">
+                    <h2 class="step-title">Información de Pago</h2>
+                    <p class="step-subtitle">Datos seguros para procesar tu suscripción</p>
+                </div>
+
+                <div class="form-section">
+                    <label for="cardNumber" class="form-label">Número de Tarjeta</label>
+                    <input type="text" id="cardNumber" class="form-input" required placeholder="1234 5678 9012 3456" maxlength="19">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-section">
+                        <label for="expiry" class="form-label">Fecha de Expiración</label>
+                        <input type="text" id="expiry" class="form-input" required placeholder="MM/AA" maxlength="5">
+                    </div>
+
+                    <div class="form-section">
+                        <label for="cvv" class="form-label">CVV</label>
+                        <input type="text" id="cvv" class="form-input" required placeholder="123" maxlength="4">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <label for="cardName" class="form-label">Nombre en la Tarjeta</label>
+                    <input type="text" id="cardName" class="form-input" required placeholder="Nombre Apellido">
+                </div>
+
+                <div class="step-navigation">
+                    <button class="step-btn" onclick="prevStep(2)">← Anterior</button>
+                    <button class="step-btn step-btn-primary" onclick="procesarPago()">💳 Procesar Suscripción</button>
+                </div>
+
+                <div class="security-info">
+                    <div class="security-title">🔒 Pago 100% seguro con Mercado Pago</div>
+                    <div class="security-text">
+                        Todos los pagos se procesan con encriptación SSL de 256 bits.<br>
+                        Tu información financiera está completamente protegida por la entidad financiera de Mercado Pago.
+                    </div>                    
+                </div>
+            </div>
+
+            <!-- Paso 4: Confirmación -->
+            <div class="step" id="step4">
+                <div class="step-header">
+                    <h2 class="step-title">¡Suscripción Exitosa!</h2>
+                    <p class="step-subtitle">Tu suscripción ha sido procesada correctamente</p>
+                </div>
+
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">🎉</div>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                        Recibirás la factura por WhatsApp junto con tu código único para compartir.
+                    </p>
+                    <button class="step-btn step-btn-primary" onclick="location.href='/'">
+                        🏠 Volver al Inicio
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-text">
+                © 2025 Ruta Libre. Transporte premium ejecutivo en Salta.
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Obtener parámetros de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const planSeleccionado = urlParams.get('plan') || 'urbano-basico';
+        document.getElementById('plan').value = planSeleccionado;
+
+        // Gestión de pasos
+        function showStep(step) {
+            // Ocultar todos los pasos
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+
+            // Mostrar el paso actual
+            document.getElementById('step' + step).classList.add('active');
+
+            // Actualizar indicadores
+            document.querySelectorAll('.step-indicator').forEach((indicator, index) => {
+                indicator.classList.remove('active', 'completed');
+                if (index + 1 < step) {
+                    indicator.classList.add('completed');
+                } else if (index + 1 === step) {
+                    indicator.classList.add('active');
+                }
+            });
+        }
+
+        function nextStep(step) {
+            if (step === 2) {
+                const tipo = document.getElementById('tipoCliente').value;
+                if (!tipo) {
+                    alert('❌ Por favor selecciona un tipo de cliente.');
+                    return;
+                }
+                generateDynamicFields(tipo);
+            }
+            showStep(step);
+        }
+
+        function prevStep(step) {
+            showStep(step);
+        }
+
+        function generateDynamicFields(tipo) {
+            const container = document.getElementById('dynamic-fields');
+
+            let fields = '';
+            if (tipo === 'turista') {
+                fields = `
+                    <div class="form-section">
+                        <label for="pasaporte" class="form-label">Número de Pasaporte</label>
+                        <input type="text" id="pasaporte" class="form-input" required placeholder="Número de pasaporte">
+                    </div>
+                    <div class="form-section">
+                        <label for="nacionalidad" class="form-label">Nacionalidad</label>
+                        <input type="text" id="nacionalidad" class="form-input" required placeholder="Tu nacionalidad">
+                    </div>
+                `;
+            } else if (tipo === 'minero') {
+                fields = `
+                    <div class="form-section">
+                        <label for="empresa" class="form-label">Empresa Minera</label>
+                        <input type="text" id="empresa" class="form-input" required placeholder="Nombre de la empresa minera">
+                    </div>
+                    <div class="form-section">
+                        <label for="puesto" class="form-label">Puesto/Cargo</label>
+                        <input type="text" id="puesto" class="form-input" required placeholder="Tu puesto en la empresa">
+                    </div>
+                `;
+            } else if (tipo === 'empresa') {
+                fields = `
+                    <div class="form-section">
+                        <label for="empresa" class="form-label">Nombre de la Empresa</label>
+                        <input type="text" id="empresa" class="form-input" required placeholder="Nombre de la empresa">
+                    </div>
+                    <div class="form-section">
+                        <label for="cuit" class="form-label">CUIT</label>
+                        <input type="text" id="cuit" class="form-input" required placeholder="CUIT de la empresa">
+                    </div>
+                `;
+            }
+
+            container.innerHTML = fields;
+            container.classList.add('show');
+        }
+
+        async function procesarPago() {
+            const submitBtn = event.target;
+            const form = document.getElementById('step3');
+
+            // Validaciones básicas
+            const nombre = document.getElementById('nombre').value.trim();
+            if (nombre.length < 2) {
+                alert('❌ El nombre debe tener al menos 2 caracteres.');
+                document.getElementById('nombre').focus();
+                return;
+            }
+
+            const email = document.getElementById('email').value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('❌ Ingresa un correo electrónico válido.');
+                document.getElementById('email').focus();
+                return;
+            }
+
+            const telefono = document.getElementById('telefono').value.trim();
+            if (telefono.length < 10) {
+                alert('❌ El teléfono debe tener al menos 10 dígitos.');
+                document.getElementById('telefono').focus();
+                return;
+            }
+
+            // Validaciones de pago
+            const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+            if (cardNumber.length < 16) {
+                alert('❌ El número de tarjeta debe tener al menos 16 dígitos.');
+                document.getElementById('cardNumber').focus();
+                return;
+            }
+
+            const expiry = document.getElementById('expiry').value.trim();
+            if (!/^\d{2}\/\d{2}$/.test(expiry)) {
+                alert('❌ La fecha de expiración debe tener el formato MM/AA.');
+                document.getElementById('expiry').focus();
+                return;
+            }
+
+            const cvv = document.getElementById('cvv').value.trim();
+            if (cvv.length < 3) {
+                alert('❌ El CVV debe tener al menos 3 dígitos.');
+                document.getElementById('cvv').focus();
+                return;
+            }
+
+            const cardName = document.getElementById('cardName').value.trim();
+            if (!cardName) {
+                alert('❌ Ingresa el nombre como aparece en la tarjeta.');
+                document.getElementById('cardName').focus();
+                return;
+            }
+
+            // Preparar datos
+            const subscriptionData = {
+                tipoCliente: document.getElementById('tipoCliente').value,
+                nombre,
+                email,
+                telefono,
+                plan: document.getElementById('plan').value,
+                // Campos dinámicos
+                pasaporte: document.getElementById('pasaporte')?.value || '',
+                nacionalidad: document.getElementById('nacionalidad')?.value || '',
+                empresa: document.getElementById('empresa')?.value || '',
+                puesto: document.getElementById('puesto')?.value || '',
+                cuit: document.getElementById('cuit')?.value || '',
+                // Datos de pago
+                cardNumber,
+                expiry,
+                cvv,
+                cardName
+            };
+
+            // Mostrar estado de carga
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+            submitBtn.textContent = 'Procesando...';
+
+            try {
+                const response = await fetch('/api/suscripcion', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(subscriptionData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.ok) {
+                    showStep(4);
+                } else {
+                    throw new Error(result.errors ? result.errors.map(e => e.msg).join(', ') : result.error);
+                }
+
+            } catch (error) {
+                console.error('Error en suscripción:', error);
+                alert(`❌ Error: ${error.message}`);
+            } finally {
+                // Restaurar botón
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
+                submitBtn.innerHTML = '💳 Procesar Suscripción';
+            }
+        }
+
+        // Formateo automático de campos
+        document.getElementById('cardNumber').addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+            e.target.value = value.substring(0, 19);
+        });
+
+        document.getElementById('expiry').addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value.substring(0, 5);
+        });
+
+        document.getElementById('cvv').addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+        });
+    </script>
+</body>
+</html>

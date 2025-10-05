@@ -1,0 +1,2396 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+  <title>Panel Admin - Ruta Libre</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #3498db;
+      --accent-color: #e74c3c;
+      --success-color: #27ae60;
+      --warning-color: #f39c12;
+      --light-bg: #f8f9fa;
+      --dark-bg: #343a40;
+      --text-color: #2c3e50;
+      --border-color: #dee2e6;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .sidebar {
+      width: 280px;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: linear-gradient(180deg, var(--primary-color) 0%, var(--dark-bg) 100%);
+      color: #fff;
+      padding-top: 20px;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      z-index: 1000;
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar.collapsed {
+      transform: translateX(-280px);
+    }
+
+    .sidebar .brand {
+      text-align: center;
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 20px;
+    }
+
+    .sidebar .brand h4 {
+      margin: 0;
+      color: var(--secondary-color);
+      font-weight: 700;
+    }
+
+    .sidebar a {
+      color: #fff;
+      text-decoration: none;
+      padding: 15px 25px;
+      display: block;
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+    }
+
+    .sidebar a:hover, .sidebar a.active {
+      background: rgba(52, 152, 219, 0.1);
+      border-left-color: var(--secondary-color);
+      color: var(--secondary-color);
+    }
+
+    .sidebar a i {
+      margin-right: 10px;
+      width: 20px;
+    }
+
+    .main-content {
+      margin-left: 280px;
+      padding: 30px;
+      min-height: 100vh;
+      background: var(--light-bg);
+      transition: margin-left 0.3s ease;
+    }
+
+    .main-content.expanded {
+      margin-left: 0;
+    }
+
+    .navbar {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+      padding: 15px 25px;
+    }
+
+    .breadcrumb {
+      background: transparent;
+      margin: 0;
+    }
+
+    .section {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .card {
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      margin-bottom: 25px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, var(--secondary-color) 0%, #2980b9 100%);
+      color: white;
+      border-radius: 15px 15px 0 0 !important;
+      border: none;
+      padding: 20px;
+      font-weight: 600;
+    }
+
+    .card-body {
+      padding: 25px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-bg) 100%);
+      color: white;
+      border-radius: 15px;
+      transition: transform 0.2s ease;
+    }
+
+    .stat-card:hover {
+      transform: scale(1.02);
+    }
+
+    .stat-card.success {
+      background: linear-gradient(135deg, var(--success-color) 0%, #2ecc71 100%);
+    }
+
+    .stat-card.warning {
+      background: linear-gradient(135deg, var(--warning-color) 0%, #e67e22 100%);
+    }
+
+    .btn {
+      border-radius: 25px;
+      padding: 10px 25px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--secondary-color) 0%, #2980b9 100%);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #2980b9 0%, var(--secondary-color) 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--success-color) 0%, #2ecc71 100%);
+    }
+
+    .btn-warning {
+      background: linear-gradient(135deg, var(--warning-color) 0%, #e67e22 100%);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, var(--accent-color) 0%, #c0392b 100%);
+    }
+
+    .table {
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .table thead th {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      font-weight: 600;
+    }
+
+    .modal-content {
+      border-radius: 15px;
+      border: none;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, var(--secondary-color) 0%, #2980b9 100%);
+      color: white;
+      border-radius: 15px 15px 0 0;
+      border: none;
+    }
+
+    .form-control, .form-select {
+      border-radius: 10px;
+      border: 2px solid var(--border-color);
+      padding: 12px 15px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+    }
+
+    .tab-content {
+      padding: 20px 0;
+    }
+
+    .nav-tabs {
+      border: none;
+      background: var(--light-bg);
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .nav-tabs .nav-link {
+      border: none;
+      color: var(--text-color);
+      font-weight: 600;
+      border-radius: 8px;
+      margin-right: 5px;
+    }
+
+    .nav-tabs .nav-link.active {
+      background: var(--secondary-color);
+      color: white;
+    }
+
+    .toggle-sidebar {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1001;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      font-size: 18px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-280px);
+      }
+
+      .sidebar.show {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 20px 15px;
+      }
+
+      .toggle-sidebar {
+        display: block;
+      }
+
+      .navbar {
+        padding: 10px 15px;
+      }
+
+      .card-body {
+        padding: 15px;
+      }
+
+      .btn {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      .stat-card .card-title {
+        font-size: 14px;
+      }
+
+      .stat-card .card-text {
+        font-size: 24px;
+      }
+
+      .table-responsive {
+        font-size: 12px;
+      }
+
+      .modal-dialog {
+        margin: 10px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .main-content {
+        padding: 15px 10px;
+      }
+
+      .sidebar .brand h4 {
+        font-size: 18px;
+      }
+
+      .sidebar a {
+        padding: 12px 20px;
+        font-size: 14px;
+      }
+
+      .card-header {
+        padding: 15px;
+        font-size: 16px;
+      }
+    }
+
+    /* Loading animation */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Message styles for chat interface */
+    .message {
+      display: flex;
+      margin-bottom: 10px;
+    }
+
+    .message.sent {
+      justify-content: flex-end;
+    }
+
+    .message.received {
+      justify-content: flex-start;
+    }
+
+    .message-content {
+      max-width: 70%;
+      word-wrap: break-word;
+    }
+
+    .message.sent .message-content {
+      background: #007bff;
+      color: white;
+      border-radius: 18px 18px 4px 18px;
+    }
+
+    .message.received .message-content {
+      background: #f1f1f1;
+      color: #333;
+      border-radius: 18px 18px 18px 4px;
+    }
+
+    .cursor-pointer {
+      cursor: pointer;
+    }
+
+    .cursor-pointer:hover {
+      background-color: #f8f9fa;
+    }
+  </style>
+</head>
+<body>
+  <button class="toggle-sidebar btn btn-primary" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <div class="sidebar" id="sidebar">
+    <div class="brand">
+      <h4><i class="fas fa-route"></i> Ruta Libre</h4>
+      <small>Panel Administrativo</small>
+    </div>
+    <a href="#dashboard" onclick="showSection('dashboard')" class="active" id="nav-dashboard">
+      <i class="fas fa-tachometer-alt"></i> Dashboard
+    </a>
+    <a href="#vehiculos" onclick="showSection('vehiculos')" id="nav-vehiculos">
+      <i class="fas fa-car"></i> Vehículos
+    </a>
+    <a href="#conductores" onclick="showSection('conductores')" id="nav-conductores">
+      <i class="fas fa-user-tie"></i> Conductores
+    </a>
+    <a href="#clientes" onclick="showSection('clientes')" id="nav-clientes">
+      <i class="fas fa-users"></i> Clientes VIP
+    </a>
+    <a href="#destinos" onclick="showSection('destinos')" id="nav-destinos">
+      <i class="fas fa-map-marker-alt"></i> Destinos
+    </a>
+    <a href="#contabilidad" onclick="showSection('contabilidad')" id="nav-contabilidad">
+      <i class="fas fa-calculator"></i> Contabilidad
+    </a>
+    <a href="#reservas" onclick="showSection('reservas')" id="nav-reservas">
+      <i class="fas fa-calendar-check"></i> Reservas
+    </a>
+    <a href="#mapa" onclick="showSection('mapa')" id="nav-mapa">
+      <i class="fas fa-map"></i> Mapa Conductores
+    </a>
+    <a href="#asistente" onclick="showSection('asistente')" id="nav-asistente">
+      <i class="fas fa-robot"></i> Asistente
+    </a>
+    <a href="#mensajes" onclick="showSection('mensajes')" id="nav-mensajes">
+      <i class="fas fa-comments"></i> Mensajes
+    </a>
+  </div>
+
+  <div class="main-content" id="main-content">
+    <nav aria-label="breadcrumb" class="navbar">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item active" id="breadcrumb">Dashboard</li>
+      </ol>
+      <div class="ms-auto">
+        <small class="text-muted">
+          <i class="fas fa-clock"></i> Última actualización: <span id="last-update"></span>
+        </small>
+      </div>
+    </nav>
+    <div id="dashboard" class="section">
+      <h2>Dashboard</h2>
+      <div class="row" id="stats-row">
+        <!-- Stats cargados dinámicamente -->
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header">Reservas por Mes</div>
+            <div class="card-body">
+              <canvas id="reservationsChart"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header">Ingresos por Tipo</div>
+            <div class="card-body">
+              <canvas id="incomeChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="vehiculos" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="fas fa-car text-primary me-2"></i>Vehículos</h2>
+        <button class="btn btn-primary" onclick="showVehicleModal()">
+          <i class="fas fa-plus me-2"></i>Agregar Vehículo
+        </button>
+      </div>
+      <div class="row" id="vehicles-list">
+        <!-- Vehicles loaded dynamically -->
+      </div>
+    </div>
+
+    <div id="conductores" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="fas fa-user-tie text-primary me-2"></i>Conductores</h2>
+        <button class="btn btn-primary" onclick="showDriverModal()">
+          <i class="fas fa-plus me-2"></i>Agregar Conductor
+        </button>
+      </div>
+      <div class="row" id="drivers-list">
+        <!-- Drivers loaded dynamically -->
+      </div>
+    </div>
+
+    <div id="clientes" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="fas fa-users text-primary me-2"></i>Clientes VIP</h2>
+        <button class="btn btn-primary" onclick="showClientModal()">
+          <i class="fas fa-plus me-2"></i>Agregar Cliente
+        </button>
+      </div>
+      <ul class="nav nav-tabs" id="clientTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="todos-tab" data-bs-toggle="tab" data-bs-target="#todos" type="button" role="tab" aria-controls="todos" aria-selected="true">Todos</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="turismo-tab" data-bs-toggle="tab" data-bs-target="#turismo" type="button" role="tab" aria-controls="turismo" aria-selected="false">Turismo</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="mineras-tab" data-bs-toggle="tab" data-bs-target="#mineras" type="button" role="tab" aria-controls="mineras" aria-selected="false">Empresas Mineras</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="urbano-tab" data-bs-toggle="tab" data-bs-target="#urbano" type="button" role="tab" aria-controls="urbano" aria-selected="false">Urbano</button>
+        </li>
+      </ul>
+      <div class="tab-content" id="clientTabsContent">
+        <div class="tab-pane fade show active" id="todos" role="tabpanel" aria-labelledby="todos-tab"></div>
+        <div class="tab-pane fade" id="turismo" role="tabpanel" aria-labelledby="turismo-tab"></div>
+        <div class="tab-pane fade" id="mineras" role="tabpanel" aria-labelledby="mineras-tab"></div>
+        <div class="tab-pane fade" id="urbano" role="tabpanel" aria-labelledby="urbano-tab"></div>
+      </div>
+    </div>
+
+    <div id="destinos" class="section" style="display:none;">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="fas fa-map-marker-alt text-primary me-2"></i>Destinos</h2>
+        <button class="btn btn-primary" onclick="showDestinationModal()">
+          <i class="fas fa-plus me-2"></i>Agregar Destino
+        </button>
+      </div>
+      <div class="row" id="destinations-list">
+        <!-- Destinations loaded dynamically -->
+      </div>
+    </div>
+
+    <div id="contabilidad" class="section" style="display:none;">
+      <h2>Contabilidad</h2>
+
+      <!-- Botón para liberar pagos -->
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>Liberar Pagos a Conductores</span>
+          <button onclick="mostrarModalLiberarPagos()" class="btn btn-success">
+            <i class="fas fa-money-bill-wave me-2"></i>Liberar Pagos
+          </button>
+        </div>
+        <div class="card-body">
+          <p class="text-muted">Libera los pagos pendientes a conductores con saldo positivo. Se enviará factura detallada por WhatsApp.</p>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-header">Configuración de Precios</div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <label for="kmPrice" class="form-label">Precio por Kilómetro Base (ARS)</label>
+              <input type="number" class="form-control" id="kmPrice" step="0.01" placeholder="Ej: 50.00">
+            </div>
+            <div class="col-md-6 d-flex align-items-end">
+              <button onclick="saveKmPrice()" class="btn btn-primary">Guardar Precio</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="accounting-data"></div>
+
+      <!-- Modal para liberar pagos -->
+      <div class="modal fade" id="liberarPagosModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Liberar Pagos a Conductores</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <div id="conductores-liberacion">
+                <!-- Lista de conductores con saldos positivos se cargará aquí -->
+              </div>
+              <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Selecciona los conductores a los que deseas liberar pagos. Solo se mostrarán conductores con saldo positivo.
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="button" onclick="ejecutarLiberacionPagos()" class="btn btn-success">
+                <i class="fas fa-check me-2"></i>Liberar Pagos Seleccionados
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="reservas" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="fas fa-calendar-check text-primary me-2"></i>Reservas</h2>
+        <div class="d-flex gap-2">
+          <select class="form-select form-select-sm" id="estado-filter" onchange="loadReservations()">
+            <option value="">Todas</option>
+            <option value="pendiente">Pendientes</option>
+            <option value="asignado">Asignadas</option>
+            <option value="aprobado">Aprobadas</option>
+            <option value="completado">Completadas</option>
+          </select>
+        </div>
+      </div>
+      <div class="row" id="reservas-list">
+        <!-- Reservations loaded dynamically -->
+      </div>
+    </div>
+
+    <div id="mapa" class="section" style="display:none;">
+      <h2>Mapa de Conductores Activos</h2>
+      <div id="map" style="height: 600px;"></div>
+    </div>
+
+    <div id="asistente" class="section" style="display:none;">
+      <h2><i class="fas fa-robot text-primary me-2"></i>Asistente WhatsApp</h2>
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="card">
+            <div class="card-header">Instrucciones para Iniciar el Bot</div>
+            <div class="card-body">
+              <div class="alert alert-info">
+                <h5><i class="fas fa-info-circle me-2"></i>Estado del Bot</h5>
+                <p id="bot-status">Cargando estado del bot...</p>
+                <button class="btn btn-primary btn-sm" onclick="checkBotStatus()">
+                  <i class="fas fa-sync me-1"></i>Actualizar Estado
+                </button>
+              </div>
+
+              <h5><i class="fas fa-list-check me-2"></i>Pasos para configurar:</h5>
+              <ol class="mb-4">
+                <li>Asegúrate de que el servidor esté ejecutándose con <code>npm start</code></li>
+                <li>Si el bot no está conectado, aparecerá un código QR abajo</li>
+                <li>Escanea el código QR con WhatsApp Web en tu teléfono</li>
+                <li>Una vez escaneado, el bot estará listo para recibir mensajes</li>
+                <li>El bot responderá automáticamente a los comandos de cotización y reserva</li>
+              </ol>
+
+              <div id="qr-container" class="text-center">
+                <h5>Código QR para WhatsApp</h5>
+                <div id="qr-image-container">
+                  <img id="qr-image" src="" alt="QR Code" class="img-fluid border rounded" style="max-width: 300px; display: none;">
+                  <p id="qr-loading" class="text-muted">Cargando QR...</p>
+                </div>
+                <button class="btn btn-outline-primary mt-3" onclick="refreshQR()">
+                  <i class="fas fa-qrcode me-1"></i>Refrescar QR
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-header">Comandos del Bot</div>
+            <div class="card-body">
+              <div class="mb-3">
+                <strong>Comandos principales:</strong>
+                <ul class="list-unstyled mt-2">
+                  <li><code>*hola*</code> - Inicia conversación</li>
+                  <li><code>*cotizar*</code> - Solicitar cotización</li>
+                  <li><code>*reservar*</code> - Hacer reserva</li>
+                  <li><code>*suscripcion*</code> - Ver planes de suscripción</li>
+                </ul>
+              </div>
+              <div class="mb-3">
+                <strong>Respuestas automáticas:</strong>
+                <ul class="list-unstyled mt-2">
+                  <li>📍 Ubicaciones GPS</li>
+                  <li>📅 Fechas y horarios</li>
+                  <li>👥 Cantidad de personas</li>
+                  <li>💳 Métodos de pago</li>
+                </ul>
+              </div>
+              <div class="alert alert-warning">
+                <small><i class="fas fa-exclamation-triangle me-1"></i>Nota: El bot solo responde en conversaciones iniciadas por usuarios.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="mensajes" class="section" style="display:none;">
+      <h2><i class="fas fa-comments text-primary me-2"></i>Mensajes del Bot</h2>
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-header">Conversaciones Activas</div>
+            <div class="card-body" style="max-height: 600px; overflow-y: auto;">
+              <div id="chats-list">
+                <div class="text-center text-muted">
+                  <i class="fas fa-spinner fa-spin me-2"></i>Cargando conversaciones...
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <span id="chat-title">Selecciona una conversación</span>
+              <div>
+                <button class="btn btn-sm btn-outline-primary" onclick="refreshMessages()">
+                  <i class="fas fa-sync me-1"></i>Actualizar
+                </button>
+              </div>
+            </div>
+            <div class="card-body" id="chat-container" style="height: 500px; overflow-y: auto; background: #f8f9fa;">
+              <div class="text-center text-muted mt-5" id="no-chat-selected">
+                <i class="fas fa-comments fa-3x mb-3"></i>
+                <p>Selecciona una conversación del panel izquierdo para ver los mensajes</p>
+              </div>
+              <div id="messages-list" style="display: none;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modals para CRUD -->
+  <div class="modal fade" id="vehicleModal" tabindex="-1" data-bs-focus="false">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Vehículo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="vehicleForm">
+            <input type="hidden" id="vehicleId">
+            <div class="mb-3">
+              <label>Modelo</label>
+              <input type="text" class="form-control" id="vehicleModelo" required>
+            </div>
+            <div class="mb-3">
+              <label>Patente</label>
+              <input type="text" class="form-control" id="vehiclePatente" required>
+            </div>
+            <div class="mb-3">
+              <label>Capacidad</label>
+              <input type="number" class="form-control" id="vehicleCapacidad" required>
+            </div>
+            <div class="mb-3">
+              <label>Disponible</label>
+              <input type="checkbox" id="vehicleDisponible">
+            </div>
+            <button type="button" onclick="saveVehicle()" class="btn btn-primary">Guardar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Conductor -->
+  <div class="modal fade" id="driverModal" tabindex="-1" data-bs-focus="false">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Conductor</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Navegación de pasos -->
+          <ul class="nav nav-pills nav-fill mb-4" id="driverFormTabs">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="datos-personales-tab" data-bs-toggle="pill" data-bs-target="#datos-personales" type="button" role="tab">
+                <i class="fas fa-user me-2"></i>Datos Personales
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="datos-bancarios-tab" data-bs-toggle="pill" data-bs-target="#datos-bancarios" type="button" role="tab">
+                <i class="fas fa-credit-card me-2"></i>Datos Bancarios
+              </button>
+            </li>
+          </ul>
+
+          <!-- Contenido de pasos -->
+          <div class="tab-content" id="driverFormContent">
+            <!-- Paso 1: Datos Personales -->
+            <div class="tab-pane fade show active" id="datos-personales" role="tabpanel">
+              <form id="driverFormStep1">
+                <input type="hidden" id="driverId">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label>Nombre Completo *</label>
+                    <input type="text" class="form-control" id="driverNombre" required>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label>DNI *</label>
+                    <input type="text" class="form-control" id="driverDni" required pattern="[0-9]{8}" title="Ingrese 8 dígitos">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label>Número de WhatsApp *</label>
+                    <input type="text" class="form-control" id="driverTelefono" required pattern="[0-9]{10,15}" title="Ingrese número con código de área">
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label>Número de Licencia de Conducir *</label>
+                    <input type="text" class="form-control" id="driverLicencia" required>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label>Tipo de Licencia *</label>
+                    <select class="form-select" id="driverTipoLicencia" required>
+                      <option value="">Seleccionar tipo</option>
+                      <option value="B1">B1 - Automóviles</option>
+                      <option value="B2">B2 - Camionetas</option>
+                      <option value="C1">C1 - Camiones pequeños</option>
+                      <option value="C2">C2 - Camiones medianos</option>
+                      <option value="C3">C3 - Camiones grandes</option>
+                      <option value="D1">D1 - Colectivos pequeños</option>
+                      <option value="D2">D2 - Colectivos grandes</option>
+                      <option value="D3">D3 - Transporte escolar</option>
+                      <option value="D4">D4 - Transporte especial</option>
+                      <option value="E1">E1 - Acoplados</option>
+                      <option value="E2">E2 - Semirremolques</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label>Vehículo</label>
+                    <select class="form-select" id="driverVehiculo">
+                      <option value="">Seleccionar vehículo existente</option>
+                      <!-- Vehículos disponibles se cargarán aquí -->
+                    </select>
+                    <div class="form-check mt-2">
+                      <input class="form-check-input" type="checkbox" id="crearNuevoVehiculo">
+                      <label class="form-check-label" for="crearNuevoVehiculo">
+                        Crear nuevo vehículo para este conductor
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label>Contraseña *</label>
+                    <input type="password" class="form-control" id="driverPassword" required>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label>Porcentaje de Pago *</label>
+                    <input type="number" class="form-control" id="driverPorcentaje" step="0.01" required min="0" max="100">
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="driverDisponible">
+                    <label class="form-check-label" for="driverDisponible">
+                      Disponible para asignaciones
+                    </label>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <!-- Paso 2: Datos Bancarios -->
+            <div class="tab-pane fade" id="datos-bancarios" role="tabpanel">
+              <form id="driverFormStep2">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label>CBU / CVU *</label>
+                    <input type="text" class="form-control" id="driverCbuCvu" required pattern="[0-9]{22}" title="Ingrese 22 dígitos">
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label>CUIT / CUIL *</label>
+                    <input type="text" class="form-control" id="driverCuitCuil" required pattern="[0-9]{11}" title="Ingrese 11 dígitos">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label>Nombre Completo del Titular *</label>
+                    <input type="text" class="form-control" id="driverTitularNombre" required>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label>Banco / Billetera Virtual *</label>
+                    <select class="form-select" id="driverBanco" required>
+                      <option value="">Seleccionar entidad</option>
+                      <option value="Banco de la Nación Argentina">Banco de la Nación Argentina</option>
+                      <option value="Banco Provincia">Banco Provincia</option>
+                      <option value="Banco Ciudad">Banco Ciudad</option>
+                      <option value="Banco Galicia">Banco Galicia</option>
+                      <option value="Banco Francés">Banco Francés</option>
+                      <option value="Banco Santander">Banco Santander</option>
+                      <option value="Banco HSBC">Banco HSBC</option>
+                      <option value="Banco ICBC">Banco ICBC</option>
+                      <option value="Banco Macro">Banco Macro</option>
+                      <option value="Banco Patagonia">Banco Patagonia</option>
+                      <option value="Banco Credicoop">Banco Credicoop</option>
+                      <option value="Banco Supervielle">Banco Supervielle</option>
+                      <option value="Banco Comafi">Banco Comafi</option>
+                      <option value="Banco Dino">Banco Dino</option>
+                      <option value="Banco Columbia">Banco Columbia</option>
+                      <option value="Mercado Pago">Mercado Pago</option>
+                      <option value="Ualá">Ualá</option>
+                      <option value="Personal Pay">Personal Pay</option>
+                      <option value="Naranja X">Naranja X</option>
+                      <option value="Brubank">Brubank</option>
+                      <option value="Rebanking">Rebanking</option>
+                      <option value="Wilobank">Wilobank</option>
+                      <option value="Otro">Otro</option>
+                    </select>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between mt-4">
+            <button type="button" class="btn btn-secondary" id="prevStepBtn" onclick="prevStep()" style="display: none;">
+              <i class="fas fa-arrow-left me-2"></i>Anterior
+            </button>
+            <div></div>
+            <div>
+              <button type="button" class="btn btn-primary" id="nextStepBtn" onclick="nextStep()">
+                Siguiente <i class="fas fa-arrow-right ms-2"></i>
+              </button>
+              <button type="button" class="btn btn-success" id="saveDriverBtn" onclick="saveDriver()" style="display: none;">
+                <i class="fas fa-save me-2"></i>Guardar Conductor
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal Cliente -->
+  <div class="modal fade" id="clientModal" tabindex="-1" data-bs-focus="false">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Cliente VIP</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="clientForm">
+            <input type="hidden" id="clientId">
+            <div class="mb-3">
+              <label>Nombre</label>
+              <input type="text" class="form-control" id="clientNombre" required>
+            </div>
+            <div class="mb-3">
+              <label>Email</label>
+              <input type="email" class="form-control" id="clientEmail" required>
+            </div>
+            <div class="mb-3">
+              <label>Teléfono</label>
+              <input type="text" class="form-control" id="clientTelefono" required>
+            </div>
+            <div class="mb-3">
+              <label>Tipo Cliente</label>
+              <select class="form-select" id="clientTipoCliente" required>
+                <option value="turista">Turismo</option>
+                <option value="minero">Empresas Mineras</option>
+                <option value="empresa">Empresarial Urbano</option>
+                <option value="urbano">Urbano Puntual</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label>Plan</label>
+              <input type="text" class="form-control" id="clientPlan">
+            </div>
+            <button type="button" onclick="saveClient()" class="btn btn-primary">Guardar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal Destino -->
+  <div class="modal fade" id="destinationModal" tabindex="-1" data-bs-focus="false">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Destino</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="destinationForm">
+            <input type="hidden" id="destinationId">
+            <div class="mb-3">
+              <label>Nombre</label>
+              <input type="text" class="form-control" id="destinationNombre" required>
+            </div>
+            <div class="mb-3">
+              <label>Categoría</label>
+              <select class="form-select" id="destinationCategoria" required>
+                <option value="Salta Capital">Salta Capital</option>
+                <option value="Quebrada de Humahuaca">Quebrada de Humahuaca</option>
+                <option value="Quebrada y Puna">Quebrada y Puna</option>
+                <option value="Valles Calchaquíes">Valles Calchaquíes</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label>Km Ida</label>
+              <input type="number" class="form-control" id="destinationKmIda" step="0.1" required>
+            </div>
+            <div class="mb-3">
+              <label>Enlace Google Maps (opcional, para obtener coordenadas automáticamente)</label>
+              <input type="url" class="form-control" id="destinationGoogleLink" placeholder="https://maps.google.com/?q=-24.7820,-65.4083">
+            </div>
+            <div class="mb-3">
+              <label>Tipo Servicio</label>
+              <select class="form-select" id="destinationTipoServicio" required>
+                <option value="Turismo">Turismo</option>
+                <option value="Empresas Mineras">Empresas Mineras</option>
+                <option value="Urbano Puntual">Urbano Puntual</option>
+              </select>
+            </div>
+            <button type="button" onclick="saveDestination()" class="btn btn-primary">Guardar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="assignModal" tabindex="-1" data-bs-focus="false">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Asignar Vehículo y Conductor</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="assignReservaId">
+          <div class="row">
+            <div class="col-md-6">
+              <h6>Vehículos Disponibles</h6>
+              <div id="available-vehicles" class="mb-3">
+                <!-- Vehicles will be loaded here -->
+              </div>
+            </div>
+            <div class="col-md-6">
+              <h6>Conductores Disponibles</h6>
+              <div id="available-drivers" class="mb-3">
+                <!-- Drivers will be loaded here -->
+              </div>
+            </div>
+          </div>
+          <div class="alert alert-info">
+            <strong>Reserva:</strong> <span id="assign-reserva-info"></span>
+          </div>
+          <button type="button" onclick="assignReserva()" class="btn btn-success">Asignar y Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    async function makeAuthenticatedRequest(url, options = {}) {
+      const auth = getAuth()
+      if (!auth) return null
+
+      const defaultOptions = {
+        headers: {
+          'Authorization': auth,
+          'Content-Type': 'application/json'
+        }
+      }
+
+      const finalOptions = { ...defaultOptions, ...options }
+      if (options.headers) {
+        finalOptions.headers = { ...defaultOptions.headers, ...options.headers }
+      }
+
+      const response = await fetch(url, finalOptions)
+
+      // Si obtenemos 401/403, limpiar credenciales y reintentar
+      if (response.status === 401 || response.status === 403) {
+        authHeader = ''
+        localStorage.removeItem('admin_user')
+        localStorage.removeItem('admin_pass')
+        alert('Credenciales incorrectas. Por favor, ingrese nuevamente.')
+        location.reload()
+        return null
+      }
+
+      return response
+    }
+
+    let authHeader = ''
+    function getAuth() {
+      if (authHeader) return authHeader
+
+      // Intentar obtener credenciales del localStorage primero
+      const savedUser = localStorage.getItem('admin_user')
+      const savedPass = localStorage.getItem('admin_pass')
+
+      if (savedUser && savedPass) {
+        authHeader = 'Basic ' + btoa(savedUser + ':' + savedPass)
+        return authHeader
+      }
+
+      // Si no hay credenciales guardadas, pedir al usuario
+      let user, pass
+      do {
+        user = prompt('Usuario admin (email):', savedUser || 'facucercuetti420@gmail.com') || ''
+        if (!user) {
+          if (!confirm('¿Cancelar autenticación? Se recargará la página.')) continue
+          location.reload()
+          return ''
+        }
+
+        pass = prompt('Contraseña admin:', '') || ''
+        if (!pass) {
+          if (!confirm('¿Cancelar autenticación? Se recargará la página.')) continue
+          location.reload()
+          return ''
+        }
+
+        // Guardar credenciales en localStorage para futuras sesiones
+        localStorage.setItem('admin_user', user)
+        localStorage.setItem('admin_pass', pass)
+
+        authHeader = 'Basic ' + btoa(user + ':' + pass)
+        return authHeader
+      } while (true)
+    }
+
+    function showSection(section) {
+      // Update navigation
+      document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'))
+      document.getElementById('nav-' + section).classList.add('active')
+
+      // Hide all sections
+      document.querySelectorAll('.section').forEach(s => {
+        s.classList.remove('active')
+        s.style.display = 'none'
+      })
+
+      // Show selected section
+      const selectedSection = document.getElementById(section)
+      selectedSection.classList.add('active')
+      selectedSection.style.display = 'block'
+
+      // Update breadcrumb
+      const titles = {
+        dashboard: 'Dashboard',
+        vehiculos: 'Vehículos',
+        conductores: 'Conductores',
+        clientes: 'Clientes VIP',
+        destinos: 'Destinos',
+        contabilidad: 'Contabilidad',
+        reservas: 'Reservas',
+        mapa: 'Mapa Conductores',
+        asistente: 'Asistente WhatsApp',
+        mensajes: 'Mensajes del Bot'
+      }
+      document.getElementById('breadcrumb').textContent = titles[section] || section
+
+      // Load section data
+      if (section === 'dashboard') loadDashboard()
+      if (section === 'vehiculos') loadVehicles()
+      if (section === 'conductores') loadDrivers()
+      if (section === 'clientes') loadClients()
+      if (section === 'destinos') loadDestinations()
+      if (section === 'reservas') loadReservations()
+      if (section === 'contabilidad') loadAccounting()
+      if (section === 'mapa') loadMap()
+      if (section === 'asistente') loadAsistente()
+      if (section === 'mensajes') loadMensajes()
+
+      // Update last update time
+      document.getElementById('last-update').textContent = new Date().toLocaleTimeString()
+    }
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar')
+      const mainContent = document.getElementById('main-content')
+      sidebar.classList.toggle('show')
+      mainContent.classList.toggle('expanded')
+    }
+
+    async function loadDashboard() {
+      try {
+        const response = await makeAuthenticatedRequest('/api/admin/stats')
+        if (!response) return
+
+        const data = await response.json()
+        if (data.ok) {
+          const stats = data.stats
+          document.getElementById('stats-row').innerHTML = `
+            <div class="col-lg-3 col-md-6 mb-4">
+              <div class="card stat-card">
+                <div class="card-body text-center">
+                  <i class="fas fa-dollar-sign fa-2x mb-2"></i>
+                  <h6 class="card-title">Ingresos Totales</h6>
+                  <p class="card-text fs-4 fw-bold">$${stats.ingresosTotales.toLocaleString()}</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+              <div class="card stat-card success">
+                <div class="card-body text-center">
+                  <i class="fas fa-check-circle fa-2x mb-2"></i>
+                  <h6 class="card-title">Reservas Aprobadas</h6>
+                  <p class="card-text fs-4 fw-bold">${stats.reservasAprobadas}</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+              <div class="card stat-card warning">
+                <div class="card-body text-center">
+                  <i class="fas fa-clock fa-2x mb-2"></i>
+                  <h6 class="card-title">Reservas Pendientes</h6>
+                  <p class="card-text fs-4 fw-bold">${stats.reservasPendientes}</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+              <div class="card stat-card">
+                <div class="card-body text-center">
+                  <i class="fas fa-users fa-2x mb-2"></i>
+                  <h6 class="card-title">Total Clientes</h6>
+                  <p class="card-text fs-4 fw-bold">${stats.totalClientes}</p>
+                </div>
+              </div>
+            </div>
+          `
+          // Destruir gráficos existentes si existen y son válidos
+          if (window.reservationsChart && typeof window.reservationsChart.destroy === 'function') {
+            window.reservationsChart.destroy()
+          }
+          if (window.incomeChart && typeof window.incomeChart.destroy === 'function') {
+            window.incomeChart.destroy()
+          }
+
+          // Gráficos con datos reales
+          try {
+            window.reservationsChart = new Chart(ctx1, {
+              type: 'line',
+              data: {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                datasets: [{
+                  label: 'Reservas',
+                  data: [stats.totalReservas / 6, stats.totalReservas / 6, stats.totalReservas / 6, stats.totalReservas / 6, stats.totalReservas / 6, stats.totalReservas / 6], // Placeholder
+                  borderColor: 'rgb(75, 192, 192)',
+                  tension: 0.1
+                }]
+              }
+            })
+
+            const ctx2 = document.getElementById('incomeChart').getContext('2d')
+            window.incomeChart = new Chart(ctx2, {
+              type: 'pie',
+              data: {
+                labels: ['Turismo', 'Mineras', 'Urbano'],
+                datasets: [{
+                  data: [stats.ingresosTotales * 0.5, stats.ingresosTotales * 0.3, stats.ingresosTotales * 0.2], // Placeholder
+                  backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe']
+                }]
+              }
+            })
+          } catch (chartError) {
+            console.error('Error creating charts:', chartError)
+            // Limpiar variables en caso de error
+            window.reservationsChart = null
+            window.incomeChart = null
+          }
+        }
+      } catch (error) {
+        console.error('Error loading dashboard:', error)
+        document.getElementById('stats-row').innerHTML = '<div class="col-12"><div class="alert alert-danger">Error al cargar dashboard</div></div>'
+      }
+    }
+
+    async function loadVehicles() {
+      try {
+        const response = await makeAuthenticatedRequest('/api/admin/vehiculos')
+        if (!response) return
+
+        const data = await response.json()
+        if (data.ok) {
+          document.getElementById('vehicles-list').innerHTML = data.data.map(v => `
+            <div class="col-lg-4 col-md-6 mb-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                      <h5 class="card-title mb-1">
+                        <i class="fas fa-car text-primary me-2"></i>${v.modelo}
+                      </h5>
+                      <h6 class="card-subtitle mb-2 text-muted">${v.patente}</h6>
+                    </div>
+                    <span class="badge ${v.disponible ? 'bg-success' : 'bg-secondary'}">
+                      ${v.disponible ? 'Disponible' : 'Ocupado'}
+                    </span>
+                  </div>
+                  <p class="card-text">
+                    <i class="fas fa-users me-2"></i>Capacidad: ${v.capacidad} personas
+                  </p>
+                  <div class="d-flex gap-2 mt-3">
+                    <button class="btn btn-sm btn-outline-warning flex-fill" onclick="editVehicle('${v._id}')">
+                      <i class="fas fa-edit me-1"></i>Editar
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger flex-fill" onclick="deleteVehicle('${v._id}')">
+                      <i class="fas fa-trash me-1"></i>Eliminar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `).join('')
+        }
+      } catch (error) {
+        console.error('Error loading vehicles:', error)
+        document.getElementById('vehicles-list').innerHTML = '<div class="col-12"><div class="alert alert-danger">Error al cargar vehículos</div></div>'
+      }
+    }
+
+    async function loadDrivers() {
+      try {
+        const response = await makeAuthenticatedRequest('/api/admin/conductores')
+        const data = await response.json()
+        if (data.ok) {
+          document.getElementById('drivers-list').innerHTML = data.data.map(c => `
+            <div class="col-lg-4 col-md-6 mb-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                      <h5 class="card-title mb-1">
+                        <i class="fas fa-user-tie text-primary me-2"></i>${c.nombre}
+                      </h5>
+                      <h6 class="card-subtitle mb-2 text-muted">${c.telefono}</h6>
+                    </div>
+                    <span class="badge ${c.disponible ? 'bg-success' : 'bg-secondary'}">
+                      ${c.disponible ? 'Disponible' : 'Ocupado'}
+                    </span>
+                  </div>
+                  <p class="card-text">
+                    <i class="fas fa-percentage me-2"></i>Porcentaje: ${c.porcentajePago}%
+                  </p>
+                  <div class="d-flex gap-2 mt-3">
+                    <button class="btn btn-sm btn-outline-warning flex-fill" onclick="editDriver('${c._id}')">
+                      <i class="fas fa-edit me-1"></i>Editar
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger flex-fill" onclick="deleteDriver('${c._id}')">
+                      <i class="fas fa-trash me-1"></i>Eliminar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `).join('')
+        }
+      } catch (error) {
+        console.error('Error loading drivers:', error)
+        document.getElementById('drivers-list').innerHTML = '<div class="col-12"><div class="alert alert-danger">Error al cargar conductores</div></div>'
+      }
+    }
+
+    async function loadClients() {
+      try {
+        const response = await makeAuthenticatedRequest('/api/admin/suscripciones')
+        const data = await response.json()
+        if (data.ok) {
+          const clients = data.data
+
+          // Filter by type
+          const todos = clients
+          const turismo = clients.filter(c => c.tipoCliente === 'turista')
+          const mineras = clients.filter(c => c.tipoCliente === 'minero')
+          const urbano = clients.filter(c => c.tipoCliente === 'empresa' || c.tipoCliente === 'urbano')
+
+          // Render each tab
+          renderClients('todos', todos)
+          renderClients('turismo', turismo)
+          renderClients('mineras', mineras)
+          renderClients('urbano', urbano)
+        }
+      } catch (error) {
+        console.error('Error loading clients:', error)
+        document.getElementById('todos').innerHTML = '<div class="alert alert-danger">Error al cargar clientes</div>'
+      }
+    }
+
+    function renderClients(tabId, clients) {
+      const container = document.getElementById(tabId)
+      if (clients.length === 0) {
+        container.innerHTML = '<div class="alert alert-info">No hay clientes en esta categoría</div>'
+        return
+      }
+
+      container.innerHTML = clients.map(c => `
+        <div class="col-lg-6 col-xl-4 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <h5 class="card-title mb-1">
+                    <i class="fas fa-user text-primary me-2"></i>${c.nombre}
+                  </h5>
+                  <h6 class="card-subtitle mb-2 text-muted">${c.email}</h6>
+                </div>
+                <span class="badge ${c.estado === 'activa' ? 'bg-success' : 'bg-secondary'}">
+                  ${c.estado || 'Activa'}
+                </span>
+              </div>
+              <p class="card-text mb-2">
+                <i class="fas fa-phone me-2"></i>${c.telefono}
+              </p>
+              <p class="card-text mb-2">
+                <i class="fas fa-tag me-2"></i>${getTipoClienteLabel(c.tipoCliente)}
+              </p>
+              ${c.plan ? `<p class="card-text mb-2"><i class="fas fa-star me-2"></i>Plan: ${c.plan}</p>` : ''}
+              <div class="d-flex gap-2 mt-3">
+                <button class="btn btn-sm btn-outline-warning flex-fill" onclick="editClient('${c._id}')">
+                  <i class="fas fa-edit me-1"></i>Editar
+                </button>
+                <button class="btn btn-sm btn-outline-danger flex-fill" onclick="deleteClient('${c._id}')">
+                  <i class="fas fa-trash me-1"></i>Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('')
+    }
+
+    function getTipoClienteLabel(tipo) {
+      const labels = {
+        'turista': 'Turismo',
+        'minero': 'Empresas Mineras',
+        'empresa': 'Empresarial Urbano',
+        'urbano': 'Urbano Puntual'
+      }
+      return labels[tipo] || tipo
+    }
+
+    function showClientModal(id = null) {
+      document.getElementById('clientId').value = id || ''
+      if (id) {
+        fetch(`/api/admin/suscripciones/${id}`)
+          .then(r => r.json())
+          .then(data => {
+            if (data.ok) {
+              document.getElementById('clientNombre').value = data.data.nombre
+              document.getElementById('clientEmail').value = data.data.email
+              document.getElementById('clientTelefono').value = data.data.telefono
+              document.getElementById('clientTipoCliente').value = data.data.tipoCliente
+              document.getElementById('clientPlan').value = data.data.plan || ''
+            }
+          })
+      } else {
+        document.getElementById('clientForm').reset()
+      }
+      new bootstrap.Modal(document.getElementById('clientModal')).show()
+    }
+
+    async function saveClient() {
+      const id = document.getElementById('clientId').value
+      const data = {
+        nombre: document.getElementById('clientNombre').value,
+        email: document.getElementById('clientEmail').value,
+        telefono: document.getElementById('clientTelefono').value,
+        tipoCliente: document.getElementById('clientTipoCliente').value,
+        plan: document.getElementById('clientPlan').value
+      }
+      const method = id ? 'PUT' : 'POST'
+      const url = id ? `/api/admin/suscripciones/${id}` : '/api/admin/suscripciones'
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json', 'Authorization': getAuth() },
+        body: JSON.stringify(data)
+      })
+      if (response.ok) {
+        loadClients()
+        bootstrap.Modal.getInstance(document.getElementById('clientModal')).hide()
+      } else {
+        alert('Error al guardar cliente')
+      }
+    }
+
+    function editClient(id) {
+      showClientModal(id)
+    }
+
+    async function deleteClient(id) {
+      if (confirm('¿Eliminar cliente?')) {
+        await fetch(`/api/admin/suscripciones/${id}`, { method: 'DELETE', headers: { 'Authorization': getAuth() } })
+        loadClients()
+      }
+    }
+
+    function showDriverModal(id = null) {
+      document.getElementById('driverId').value = id || ''
+      if (id) {
+        fetch(`/api/admin/conductores/${id}`)
+          .then(r => r.json())
+          .then(data => {
+            if (data.ok) {
+              document.getElementById('driverNombre').value = data.data.nombre
+              document.getElementById('driverTelefono').value = data.data.telefono
+              document.getElementById('driverPassword').value = '' // No mostrar password
+              document.getElementById('driverPorcentaje').value = data.data.porcentajePago
+              document.getElementById('driverDisponible').checked = data.data.disponible
+            }
+          })
+      } else {
+        document.getElementById('driverForm').reset()
+      }
+      new bootstrap.Modal(document.getElementById('driverModal')).show()
+    }
+
+    function editDriver(id) {
+      showDriverModal(id)
+    }
+
+    async function deleteDriver(id) {
+      if (confirm('¿Eliminar conductor?')) {
+        await fetch(`/api/admin/conductores/${id}`, { method: 'DELETE', headers: { 'Authorization': getAuth() } })
+        loadDrivers()
+      }
+    }
+
+    // Variables para controlar el formulario de 2 pasos
+    let currentStep = 1
+    const totalSteps = 2
+
+    function showDriverModal(id = null) {
+      currentStep = 1
+      document.getElementById('driverId').value = id || ''
+
+      // Cargar vehículos disponibles para el select
+      loadVehiclesForSelect()
+
+      if (id) {
+        fetch(`/api/admin/conductores/${id}`)
+          .then(r => r.json())
+          .then(data => {
+            if (data.ok) {
+              const conductor = data.data
+              // Llenar formulario paso 1
+              document.getElementById('driverNombre').value = conductor.nombre || ''
+              document.getElementById('driverTelefono').value = conductor.telefono || ''
+              document.getElementById('driverPassword').value = '' // No mostrar password existente
+              document.getElementById('driverPorcentaje').value = conductor.porcentajePago || 85
+              document.getElementById('driverDisponible').checked = conductor.disponible || false
+
+              // Campos nuevos del formulario de 2 pasos
+              document.getElementById('driverDni').value = conductor.dni || ''
+              document.getElementById('driverLicencia').value = conductor.licencia || ''
+              document.getElementById('driverTipoLicencia').value = conductor.tipoLicencia || ''
+
+              // Si tiene vehículo asignado
+              if (conductor.vehiculoId) {
+                document.getElementById('driverVehiculo').value = conductor.vehiculoId
+                document.getElementById('crearNuevoVehiculo').checked = false
+              }
+
+              // Llenar formulario paso 2 si existe
+              if (conductor.datosBancarios) {
+                document.getElementById('driverCbuCvu').value = conductor.datosBancarios.cbuCvu || ''
+                document.getElementById('driverCuitCuil').value = conductor.datosBancarios.cuitCuil || ''
+                document.getElementById('driverTitularNombre').value = conductor.datosBancarios.titularNombre || ''
+                document.getElementById('driverBanco').value = conductor.datosBancarios.banco || ''
+              }
+
+              // Si no tiene datos bancarios, establecer valores por defecto
+              if (!conductor.datosBancarios) {
+                document.getElementById('driverCbuCvu').value = ''
+                document.getElementById('driverCuitCuil').value = ''
+                document.getElementById('driverTitularNombre').value = conductor.nombre || ''
+                document.getElementById('driverBanco').value = ''
+              }
+            }
+          })
+      } else {
+        // Reset completo del formulario
+        resetDriverForm()
+      }
+
+      new bootstrap.Modal(document.getElementById('driverModal')).show()
+    }
+
+    function resetDriverForm() {
+      document.getElementById('driverFormStep1').reset()
+      document.getElementById('driverFormStep2').reset()
+      document.getElementById('driverId').value = ''
+      document.getElementById('crearNuevoVehiculo').checked = false
+    }
+
+    async function loadVehiclesForSelect() {
+      try {
+        const response = await makeAuthenticatedRequest('/api/admin/vehiculos')
+        const data = await response.json()
+        if (data.ok) {
+          const select = document.getElementById('driverVehiculo')
+          select.innerHTML = '<option value="">Seleccionar vehículo existente</option>'
+          data.data.forEach(vehiculo => {
+            const option = document.createElement('option')
+            option.value = vehiculo._id
+            option.textContent = `${vehiculo.modelo} (${vehiculo.patente})`
+            select.appendChild(option)
+          })
+        }
+      } catch (error) {
+        console.error('Error loading vehicles for select:', error)
+      }
+    }
+
+    function nextStep() {
+      if (currentStep < totalSteps) {
+        if (validateStep(currentStep)) {
+          currentStep++
+          showStep(currentStep)
+        }
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 1) {
+        currentStep--
+        showStep(currentStep)
+      }
+    }
+
+    function showStep(step) {
+      // Ocultar todos los pasos
+      document.querySelectorAll('.tab-pane').forEach(pane => {
+        pane.classList.remove('show', 'active')
+      })
+
+      // Mostrar paso actual
+      document.getElementById(`datos-personales`).style.display = step === 1 ? 'block' : 'none'
+      document.getElementById(`datos-bancarios`).style.display = step === 2 ? 'block' : 'none'
+
+      // Actualizar navegación
+      document.getElementById('datos-personales-tab').classList.toggle('active', step === 1)
+      document.getElementById('datos-bancarios-tab').classList.toggle('active', step === 2)
+
+      // Actualizar botones
+      document.getElementById('prevStepBtn').style.display = step > 1 ? 'block' : 'none'
+      document.getElementById('nextStepBtn').style.display = step < totalSteps ? 'block' : 'none'
+      document.getElementById('saveDriverBtn').style.display = step === totalSteps ? 'block' : 'none'
+    }
+
+    function validateStep(step) {
+      const stepElement = document.getElementById(`datos-${step === 1 ? 'personales' : 'bancarios'}`)
+      const inputs = stepElement.querySelectorAll('input[required], select[required]')
+      let isValid = true
+
+      inputs.forEach(input => {
+        if (!input.value.trim()) {
+          input.classList.add('is-invalid')
+          isValid = false
+        } else {
+          input.classList.remove('is-invalid')
+        }
+      })
+
+      if (!isValid) {
+        alert(`Por favor complete todos los campos obligatorios del paso ${step}`)
+      }
+
+      return isValid
+    }
+
+    async function saveDriver() {
+      if (!validateStep(currentStep)) return
+
+      const id = document.getElementById('driverId').value
+      const step1Data = {
+        nombre: document.getElementById('driverNombre').value,
+        telefono: document.getElementById('driverTelefono').value,
+        password: document.getElementById('driverPassword').value,
+        porcentajePago: Number(document.getElementById('driverPorcentaje').value),
+        disponible: document.getElementById('driverDisponible').checked,
+        dni: document.getElementById('driverDni').value,
+        licencia: document.getElementById('driverLicencia').value,
+        tipoLicencia: document.getElementById('driverTipoLicencia').value,
+        vehiculoId: document.getElementById('driverVehiculo').value || null
+      }
+
+      const step2Data = {
+        cbuCvu: document.getElementById('driverCbuCvu').value,
+        cuitCuil: document.getElementById('driverCuitCuil').value,
+        titularNombre: document.getElementById('driverTitularNombre').value,
+        banco: document.getElementById('driverBanco').value
+      }
+
+      const data = {
+        ...step1Data,
+        datosBancarios: step2Data
+      }
+
+      const method = id ? 'PUT' : 'POST'
+      const url = id ? `/api/admin/conductores/${id}` : '/api/admin/conductores'
+
+      try {
+        const response = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json', 'Authorization': getAuth() },
+          body: JSON.stringify(data)
+        })
+
+        if (response.ok) {
+          loadDrivers()
+          bootstrap.Modal.getInstance(document.getElementById('driverModal')).hide()
+          alert('Conductor guardado exitosamente')
+        } else {
+          alert('Error al guardar conductor')
+        }
+      } catch (error) {
+        console.error('Error saving driver:', error)
+        alert('Error al guardar conductor')
+      }
+    }
+
+    // Función para mostrar modal de liberación de pagos
+    async function mostrarModalLiberarPagos() {
+      try {
+        // Obtener conductores con saldos positivos
+        const response = await makeAuthenticatedRequest('/api/admin/contabilidad')
+        const data = await response.json()
+
+        const conductoresConSaldo = Object.entries(data.saldosConductores)
+          .filter(([_, saldo]) => saldo > 0)
+          .map(([clave, saldo]) => {
+            const [nombre, vehiculo] = clave.split(' - ')
+            return { nombre, vehiculo, saldo }
+          })
+
+        const modal = new bootstrap.Modal(document.getElementById('liberarPagosModal'))
+        const container = document.getElementById('conductores-liberacion')
+
+        if (conductoresConSaldo.length === 0) {
+          container.innerHTML = '<div class="alert alert-info">No hay conductores con saldo positivo para liberar pagos.</div>'
+        } else {
+          container.innerHTML = conductoresConSaldo.map(conductor => `
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" value="${conductor.nombre}-${conductor.vehiculo}" id="conductor-${conductor.nombre.replace(/\s+/g, '-')}">
+              <label class="form-check-label" for="conductor-${conductor.nombre.replace(/\s+/g, '-')}">
+                <strong>${conductor.nombre}</strong><br>
+                <small class="text-muted">${conductor.vehiculo}</small><br>
+                <span class="badge bg-success">Saldo: $${conductor.saldo.toFixed(2)}</span>
+              </label>
+            </div>
+          `).join('')
+        }
+
+        modal.show()
+      } catch (error) {
+        console.error('Error loading conductors for payment release:', error)
+        alert('Error al cargar conductores para liberación de pagos')
+      }
+    }
+
+    // Función para ejecutar la liberación de pagos
+    async function ejecutarLiberacionPagos() {
+      const checkboxes = document.querySelectorAll('#conductores-liberacion input[type="checkbox"]:checked')
+      if (checkboxes.length === 0) {
+        alert('Selecciona al menos un conductor para liberar pagos')
+        return
+      }
+
+      const conductorIds = Array.from(checkboxes).map(cb => cb.value)
+
+      try {
+        const response = await makeAuthenticatedRequest('/api/admin/liberar-pagos', {
+          method: 'POST',
+          body: JSON.stringify({ conductorIds })
+        })
+
+        const data = await response.json()
+
+        if (data.ok) {
+          bootstrap.Modal.getInstance(document.getElementById('liberarPagosModal')).hide()
+          loadAccounting()
+
+          const resumen = data.pagosLiberados.map(p =>
+            `• ${p.conductor}: $${p.monto.toFixed(2)} (${p.viajes} viajes)`
+          ).join('\n')
+
+          alert(`¡Pagos liberados exitosamente!\n\n${resumen}`)
+        } else {
+          alert('Error al liberar pagos: ' + data.error)
+        }
+      } catch (error) {
+        console.error('Error releasing payments:', error)
+        alert('Error al liberar pagos')
+      }
+    }
+
+    function editDriver(id) {
+      showDriverModal(id)
+    }
+
+    async function deleteDriver(id) {
+      if (confirm('¿Eliminar conductor?')) {
+        await fetch(`/api/admin/conductores/${id}`, { method: 'DELETE', headers: { 'Authorization': getAuth() } })
+        loadDrivers()
+      }
+    }
+
+    function showVehicleModal(id = null) {
+      document.getElementById('vehicleId').value = id || ''
+      if (id) {
+        fetch(`/api/admin/vehiculos/${id}`)
+          .then(r => r.json())
+          .then(data => {
+            if (data.ok) {
+              document.getElementById('vehicleModelo').value = data.data.modelo
+              document.getElementById('vehiclePatente').value = data.data.patente
+              document.getElementById('vehicleCapacidad').value = data.data.capacidad
+              document.getElementById('vehicleDisponible').checked = data.data.disponible
+            }
+          })
+      } else {
+        document.getElementById('vehicleForm').reset()
+      }
+      new bootstrap.Modal(document.getElementById('vehicleModal')).show()
+    }
+
+    async function saveVehicle() {
+      const id = document.getElementById('vehicleId').value
+      const data = {
+        modelo: document.getElementById('vehicleModelo').value,
+        patente: document.getElementById('vehiclePatente').value,
+        capacidad: Number(document.getElementById('vehicleCapacidad').value),
+        disponible: document.getElementById('vehicleDisponible').checked
+      }
+      const method = id ? 'PUT' : 'POST'
+      const url = id ? `/api/admin/vehiculos/${id}` : '/api/admin/vehiculos'
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json', 'Authorization': getAuth() },
+        body: JSON.stringify(data)
+      })
+      if (response.ok) {
+        loadVehicles()
+        bootstrap.Modal.getInstance(document.getElementById('vehicleModal')).hide()
+      } else {
+        alert('Error al guardar')
+      }
+    }
+
+    async function loadDestinations() {
+      try {
+        const response = await makeAuthenticatedRequest('/api/admin/destinos')
+        const data = await response.json()
+        if (data.ok) {
+          document.getElementById('destinations-list').innerHTML = data.data.map(d => `
+            <div class="col-lg-4 col-md-6 mb-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h5 class="card-title mb-3">
+                    <i class="fas fa-map-marker-alt text-primary me-2"></i>${d.nombre}
+                  </h5>
+                  <p class="card-text mb-2">
+                    <i class="fas fa-tag me-2"></i><strong>Categoría:</strong> ${d.categoria}
+                  </p>
+                  <p class="card-text mb-2">
+                    <i class="fas fa-road me-2"></i><strong>Km Ida:</strong> ${d.kmIda}
+                  </p>
+                  <p class="card-text mb-3">
+                    <i class="fas fa-cogs me-2"></i><strong>Tipo Servicio:</strong> ${d.tipoServicio}
+                  </p>
+                  <div class="d-flex gap-2 mt-3">
+                    <button class="btn btn-sm btn-outline-warning flex-fill" onclick="editDestination('${d._id}')">
+                      <i class="fas fa-edit me-1"></i>Editar
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger flex-fill" onclick="deleteDestination('${d._id}')">
+                      <i class="fas fa-trash me-1"></i>Eliminar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `).join('')
+        }
+      } catch (error) {
+        console.error('Error loading destinations:', error)
+        document.getElementById('destinations-list').innerHTML = '<div class="col-12"><div class="alert alert-danger">Error al cargar destinos</div></div>'
+      }
+    }
+
+    function showDestinationModal(id = null) {
+      document.getElementById('destinationId').value = id || ''
+      if (id) {
+        fetch(`/api/admin/destinos/${id}`)
+          .then(r => r.json())
+          .then(data => {
+            if (data.ok) {
+              document.getElementById('destinationNombre').value = data.data.nombre
+              document.getElementById('destinationCategoria').value = data.data.categoria
+              document.getElementById('destinationKmIda').value = data.data.kmIda
+              document.getElementById('destinationTipoServicio').value = data.data.tipoServicio
+            }
+          })
+      } else {
+        document.getElementById('destinationForm').reset()
+      }
+      new bootstrap.Modal(document.getElementById('destinationModal')).show()
+    }
+
+    async function saveDestination() {
+      const id = document.getElementById('destinationId').value
+      const data = {
+        nombre: document.getElementById('destinationNombre').value,
+        categoria: document.getElementById('destinationCategoria').value,
+        kmIda: Number(document.getElementById('destinationKmIda').value),
+        tipoServicio: document.getElementById('destinationTipoServicio').value
+      }
+      const method = id ? 'PUT' : 'POST'
+      const url = id ? `/api/admin/destinos/${id}` : '/api/admin/destinos'
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json', 'Authorization': getAuth() },
+        body: JSON.stringify(data)
+      })
+      if (response.ok) {
+        loadDestinations()
+        bootstrap.Modal.getInstance(document.getElementById('destinationModal')).hide()
+      } else {
+        alert('Error al guardar')
+      }
+    }
+
+    function editDestination(id) {
+      showDestinationModal(id)
+    }
+
+    async function deleteDestination(id) {
+      if (confirm('¿Eliminar destino?')) {
+        await fetch(`/api/admin/destinos/${id}`, { method: 'DELETE', headers: { 'Authorization': getAuth() } })
+        loadDestinations()
+      }
+    }
+
+    function editVehicle(id) {
+      showVehicleModal(id)
+    }
+
+    async function deleteVehicle(id) {
+      if (confirm('¿Eliminar vehículo?')) {
+        await fetch(`/api/admin/vehiculos/${id}`, { method: 'DELETE', headers: { 'Authorization': getAuth() } })
+        loadVehicles()
+      }
+    }
+
+    async function loadReservations() {
+      try {
+        const estadoFilter = document.getElementById('estado-filter').value
+        const url = estadoFilter ? `/api/admin/reservas?estado=${estadoFilter}` : '/api/admin/reservas'
+        const response = await fetch(url)
+        const data = await response.json()
+        if (data.ok) {
+          document.getElementById('reservas-list').innerHTML = data.data.map(r => `
+            <div class="col-lg-6 col-xl-4 mb-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                      <h5 class="card-title mb-1">
+                        <i class="fas fa-user text-primary me-2"></i>${r.clienteNombre}
+                      </h5>
+                      <h6 class="card-subtitle mb-2 text-muted">${r.clienteTelefono}</h6>
+                    </div>
+                    <span class="badge ${getStatusBadge(r.estado)}">${getStatusLabel(r.estado)}</span>
+                  </div>
+                  <p class="card-text mb-2">
+                    <i class="fas fa-route me-2"></i>${r.origen} → ${r.destino}
+                  </p>
+                  <p class="card-text mb-2">
+                    <i class="fas fa-calendar me-2"></i>${r.fecha} ${r.hora}
+                  </p>
+                  <p class="card-text mb-2">
+                    <i class="fas fa-users me-2"></i>${r.numPersonas} personas | <i class="fas fa-car me-2"></i>${r.numVehiculos} vehículo(s)
+                  </p>
+                  <p class="card-text mb-3">
+                    <strong class="text-success">$${r.precio}</strong>
+                  </p>
+                  <div class="d-flex gap-2">
+                    ${r.estado === 'pendiente' ? `
+                      <button class="btn btn-sm btn-success flex-fill" onclick="showAssignModal('${r._id}', '${r.clienteNombre} - ${r.origen} → ${r.destino}')">
+                        <i class="fas fa-check me-1"></i>Asignar
+                      </button>
+                      <button class="btn btn-sm btn-primary flex-fill" onclick="changeStatus('${r._id}', 'aprobado')">
+                        <i class="fas fa-thumbs-up me-1"></i>Aprobar
+                      </button>
+                    ` : r.estado === 'asignado' ? `
+                      <button class="btn btn-sm btn-primary flex-fill" onclick="changeStatus('${r._id}', 'completado')">
+                        <i class="fas fa-check-double me-1"></i>Completar
+                      </button>
+                    ` : `
+                      <span class="text-muted">Reserva ${getStatusLabel(r.estado).toLowerCase()}</span>
+                    `}
+                  </div>
+                </div>
+              </div>
+            </div>
+          `).join('')
+        }
+      } catch (error) {
+        console.error('Error loading reservations:', error)
+        document.getElementById('reservas-list').innerHTML = '<div class="col-12"><div class="alert alert-danger">Error al cargar reservas</div></div>'
+      }
+    }
+
+    function getStatusBadge(status) {
+      const badges = {
+        'pendiente': 'bg-warning text-dark',
+        'asignado': 'bg-info',
+        'aprobado': 'bg-success',
+        'completado': 'bg-secondary',
+        'cancelado': 'bg-danger'
+      }
+      return badges[status] || 'bg-secondary'
+    }
+
+    function getStatusLabel(status) {
+      const labels = {
+        'pendiente': 'Pendiente',
+        'asignado': 'Asignado',
+        'aprobado': 'Aprobado',
+        'completado': 'Completado',
+        'cancelado': 'Cancelado'
+      }
+      return labels[status] || status
+    }
+
+    async function showAssignModal(reservaId, reservaInfo) {
+      document.getElementById('assignReservaId').value = reservaId
+      document.getElementById('assign-reserva-info').textContent = reservaInfo
+
+      // Load available vehicles and drivers
+      try {
+        const [vehiclesRes, driversRes] = await Promise.all([
+          makeAuthenticatedRequest('/api/admin/vehiculos'),
+          makeAuthenticatedRequest('/api/admin/conductores')
+        ])
+
+        const vehicles = await vehiclesRes.json()
+        const drivers = await driversRes.json()
+
+        if (vehicles.ok) {
+          document.getElementById('available-vehicles').innerHTML = vehicles.data
+            .filter(v => v.disponible)
+            .map(v => `
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="selectedVehicle" value="${v._id}" id="vehicle-${v._id}">
+                <label class="form-check-label" for="vehicle-${v._id}">
+                  ${v.modelo} (${v.patente}) - Capacidad: ${v.capacidad}
+                </label>
+              </div>
+            `).join('') || '<p class="text-muted">No hay vehículos disponibles</p>'
+        }
+
+        if (drivers.ok) {
+          document.getElementById('available-drivers').innerHTML = drivers.data
+            .filter(d => d.disponible)
+            .map(d => `
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="selectedDriver" value="${d.telefono}" id="driver-${d.telefono}">
+                <label class="form-check-label" for="driver-${d.telefono}">
+                  ${d.nombre} (${d.telefono})
+                </label>
+              </div>
+            `).join('') || '<p class="text-muted">No hay conductores disponibles</p>'
+        }
+      } catch (error) {
+        console.error('Error loading available resources:', error)
+      }
+
+      new bootstrap.Modal(document.getElementById('assignModal')).show()
+    }
+
+    async function assignReserva() {
+      const reservaId = document.getElementById('assignReservaId').value
+      const selectedVehicle = document.querySelector('input[name="selectedVehicle"]:checked')
+      const selectedDriver = document.querySelector('input[name="selectedDriver"]:checked')
+
+      if (!selectedVehicle || !selectedDriver) {
+        alert('Debe seleccionar un vehículo y un conductor')
+        return
+      }
+
+      try {
+        const response = await makeAuthenticatedRequest('/api/admin/asignar', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': getAuth()
+          },
+          body: JSON.stringify({
+            reservaId,
+            patente: selectedVehicle.value,
+            telefonoConductor: selectedDriver.value
+          })
+        })
+
+        if (response.ok) {
+          bootstrap.Modal.getInstance(document.getElementById('assignModal')).hide()
+          loadReservations()
+          alert('Reserva asignada exitosamente')
+        } else {
+          alert('Error al asignar reserva')
+        }
+      } catch (error) {
+        console.error('Error assigning reserva:', error)
+        alert('Error al asignar reserva')
+      }
+    }
+
+    async function changeStatus(id, status) {
+      try {
+        await fetch(`/api/admin/reservas/${id}/estado`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': getAuth() },
+          body: JSON.stringify({ estado: status })
+        })
+        loadReservations()
+      } catch (error) {
+        console.error('Error changing status:', error)
+        alert('Error al cambiar estado')
+      }
+    }
+
+    async function loadAccounting() {
+      const response = await makeAuthenticatedRequest('/api/admin/contabilidad')
+      const data = await response.json()
+
+      const priceResponse = await makeAuthenticatedRequest('/api/admin/config/kmPrice')
+      const priceData = await priceResponse.json()
+      document.getElementById('kmPrice').value = priceData.ok ? priceData.value : 50
+
+      document.getElementById('accounting-data').innerHTML = `
+        <h4>Total Plataforma: $${data.totalPlataforma.toFixed(2)}</h4>
+        <h5>Saldos Conductores:</h5>
+        <ul>${Object.entries(data.saldosConductores).map(([clave, saldo]) => `<li><strong>${clave}</strong>: $${saldo.toFixed(2)}</li>`).join('')}</ul>
+      `
+    }
+
+    function extractCoordsFromLink(link) {
+      if (!link) return null
+      // Regex para extraer coordenadas de enlaces Google Maps
+      const regex = /[-+]?\d*\.?\d+,\s*[-+]?\d*\.?\d+/
+      const match = link.match(regex)
+      if (match) {
+        const [lat, lng] = match[0].split(',').map(coord => parseFloat(coord.trim()))
+        return { lat, lng }
+      }
+      return null
+    }
+
+    async function saveKmPrice() {
+      const price = document.getElementById('kmPrice').value
+      if (!price || parseFloat(price) <= 0) {
+        alert('Ingrese un precio válido mayor a 0')
+        return
+      }
+      try {
+        const response = await makeAuthenticatedRequest('/api/admin/config/setKmPrice', {
+          method: 'POST',
+          body: JSON.stringify({ value: parseFloat(price) })
+        })
+        if (response.ok) {
+          alert('Precio por kilómetro guardado exitosamente')
+          loadAccounting()
+        } else {
+          alert('Error al guardar el precio')
+        }
+      } catch (error) {
+        console.error('Error:', error)
+        alert('Error al guardar precio')
+      }
+    }
+
+    async function loadMap() {
+      try {
+        const response = await makeAuthenticatedRequest('/api/admin/conductores/activos')
+        const data = await response.json()
+        if (data.ok && data.data.length > 0) {
+          const map = L.map('map').setView([-24.7859, -65.4117], 10) // Salta, Argentina
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+          }).addTo(map)
+
+          // Crear un grupo de marcadores con clustering
+          const markers = L.markerClusterGroup()
+
+          data.data.forEach(conductor => {
+            if (conductor.latActual && conductor.lngActual) {
+              const marker = L.marker([conductor.latActual, conductor.lngActual])
+                .bindPopup(`
+                  <div class="text-center">
+                    <strong>${conductor.nombre}</strong><br>
+                    <small>📞 ${conductor.telefono}</small><br>
+                    <small>🚗 ${conductor.disponible ? 'Disponible' : 'Ocupado'}</small><br>
+                    <small>📍 Lat: ${conductor.latActual.toFixed(4)}, Lng: ${conductor.lngActual.toFixed(4)}</small>
+                  </div>
+                `)
+                .bindTooltip(conductor.nombre, { permanent: false, direction: 'top' })
+
+              markers.addLayer(marker)
+            }
+          })
+
+          map.addLayer(markers)
+
+          // Ajustar el mapa para mostrar todos los marcadores
+          if (markers.getBounds().isValid()) {
+            map.fitBounds(markers.getBounds(), { padding: [20, 20] })
+          }
+        } else {
+          // Mostrar mapa vacío con mensaje
+          const map = L.map('map').setView([-24.7859, -65.4117], 10)
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+          }).addTo(map)
+
+          L.popup()
+            .setLatLng([-24.7859, -65.4117])
+            .setContent('<div class="text-center"><strong>No hay conductores activos con ubicación</strong><br><small>Los conductores deben iniciar sesión y compartir ubicación</small></div>')
+            .openOn(map)
+        }
+      } catch (error) {
+        console.error('Error loading map:', error)
+        const map = L.map('map').setView([-24.7859, -65.4117], 10)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors'
+        }).addTo(map)
+
+        L.popup()
+          .setLatLng([-24.7859, -65.4117])
+          .setContent('<div class="text-center text-danger"><strong>Error al cargar el mapa</strong></div>')
+          .openOn(map)
+      }
+    }
+
+    // Asistente WhatsApp functions
+    async function loadAsistente() {
+      checkBotStatus()
+      refreshQR()
+    }
+
+    async function checkBotStatus() {
+      try {
+        const response = await makeAuthenticatedRequest('/api/admin/bot-status')
+        if (response.ok) {
+          const data = await response.json()
+          document.getElementById('bot-status').textContent = data.status || 'Estado desconocido'
+        } else {
+          document.getElementById('bot-status').textContent = 'Error al obtener estado'
+        }
+      } catch (error) {
+        console.error('Error checking bot status:', error)
+        document.getElementById('bot-status').textContent = 'Error de conexión'
+      }
+    }
+
+    async function refreshQR() {
+      document.getElementById('qr-loading').style.display = 'block'
+      document.getElementById('qr-image').style.display = 'none'
+
+      try {
+        const response = await makeAuthenticatedRequest('/api/admin/bot-qr')
+        if (response.ok) {
+          const data = await response.json()
+          if (data.qr) {
+            document.getElementById('qr-image').src = data.qr
+            document.getElementById('qr-image').style.display = 'block'
+            document.getElementById('qr-loading').style.display = 'none'
+          } else {
+            document.getElementById('qr-loading').textContent = 'QR no disponible - Bot ya conectado'
+          }
+        } else {
+          document.getElementById('qr-loading').textContent = 'Error al cargar QR'
+        }
+      } catch (error) {
+        console.error('Error loading QR:', error)
+        document.getElementById('qr-loading').textContent = 'Error de conexión'
+      }
+    }
+
+    // Mensajes del Bot functions
+    async function loadMensajes() {
+      loadChats()
+    }
+
+    async function loadChats() {
+      try {
+        const response = await makeAuthenticatedRequest('/api/admin/bot-chats')
+        if (response.ok) {
+          const data = await response.json()
+          renderChats(data.chats || [])
+        } else {
+          document.getElementById('chats-list').innerHTML = '<div class="alert alert-danger">Error al cargar conversaciones</div>'
+        }
+      } catch (error) {
+        console.error('Error loading chats:', error)
+        document.getElementById('chats-list').innerHTML = '<div class="alert alert-danger">Error de conexión</div>'
+      }
+    }
+
+    function renderChats(chats) {
+      if (chats.length === 0) {
+        document.getElementById('chats-list').innerHTML = '<div class="alert alert-info">No hay conversaciones activas</div>'
+        return
+      }
+
+      const html = chats.map(chat => `
+        <div class="card mb-2 cursor-pointer" onclick="loadChatMessages('${chat.id}', '${chat.name}')">
+          <div class="card-body p-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="card-title mb-1">${chat.name || chat.id}</h6>
+                <small class="text-muted">${chat.lastMessage || 'Sin mensajes'}</small>
+              </div>
+              <div class="text-end">
+                <small class="text-muted">${chat.time || ''}</small>
+                ${chat.unread ? `<span class="badge bg-primary">${chat.unread}</span>` : ''}
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('')
+
+      document.getElementById('chats-list').innerHTML = html
+    }
+
+    async function loadChatMessages(chatId, chatName) {
+      document.getElementById('chat-title').textContent = chatName || chatId
+      document.getElementById('no-chat-selected').style.display = 'none'
+      document.getElementById('messages-list').style.display = 'block'
+
+      try {
+        const response = await makeAuthenticatedRequest(`/api/admin/bot-messages/${chatId}`)
+        if (response.ok) {
+          const data = await response.json()
+          renderMessages(data.messages || [])
+        } else {
+          document.getElementById('messages-list').innerHTML = '<div class="alert alert-danger">Error al cargar mensajes</div>'
+        }
+      } catch (error) {
+        console.error('Error loading messages:', error)
+        document.getElementById('messages-list').innerHTML = '<div class="alert alert-danger">Error de conexión</div>'
+      }
+    }
+
+    function renderMessages(messages) {
+      if (messages.length === 0) {
+        document.getElementById('messages-list').innerHTML = '<div class="alert alert-info text-center">No hay mensajes en esta conversación</div>'
+        return
+      }
+
+      const html = messages.map(msg => `
+        <div class="message ${msg.fromMe ? 'sent' : 'received'} mb-3">
+          <div class="message-content p-3 rounded">
+            <div class="message-text">${msg.text || msg.caption || 'Mensaje multimedia'}</div>
+            <div class="message-time text-muted small mt-1">${msg.time || ''}</div>
+          </div>
+        </div>
+      `).join('')
+
+      document.getElementById('messages-list').innerHTML = html
+
+      // Scroll to bottom
+      const container = document.getElementById('chat-container')
+      container.scrollTop = container.scrollHeight
+    }
+
+    function refreshMessages() {
+      loadChats()
+      // If a chat is currently selected, reload its messages too
+      const currentTitle = document.getElementById('chat-title').textContent
+      if (currentTitle && currentTitle !== 'Selecciona una conversación') {
+        // This would need to be implemented with a currentChatId variable
+        // For now, just reload chats
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Inicializar variables de gráficos
+      window.reservationsChart = null
+      window.incomeChart = null
+      showSection('dashboard')
+    })
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+</body>
+</html>

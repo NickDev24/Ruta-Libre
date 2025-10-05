@@ -1,0 +1,1 @@
+{"level":"error","message":"Error en suscripción: generateFacturaPDF is not defined","stack":"ReferenceError: generateFacturaPDF is not defined\n    at /home/barto/Documentos/Bots-WhatApp-Varios/ruta-libre/server.js:121:21\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)","timestamp":"2025-10-04T16:45:48.605Z"}

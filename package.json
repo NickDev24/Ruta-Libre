@@ -1,0 +1,47 @@
+{
+    "name": "base-bailey-mongo",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "scripts": {
+        "prestart": "echo 'Skipping ESLint for now'",
+        "pre-copy": "cd .. && npm run  copy.lib base-baileys-mongo",
+        "start": "node app.js",
+        "start:lint": "npx eslint . --no-ignore && node app.js",
+        "seed": "node seed/seed.js",
+        "server": "node server.js"
+    },
+    "keywords": [],
+    "dependencies": {
+        "@bot-whatsapp/bot": "latest",
+        "@bot-whatsapp/cli": "latest",
+        "@bot-whatsapp/database": "latest",
+        "@bot-whatsapp/portal": "latest",
+        "@bot-whatsapp/provider": "latest",
+        "@googlemaps/google-maps-services-js": "^3.4.2",
+        "@whiskeysockets/baileys": "6.5.0",
+        "axios": "^1.12.2",
+        "body-parser": "1.20.2",
+        "cache-manager": "5.2.4",
+        "chart.js": "^4.5.0",
+        "cors": "2.8.5",
+        "dotenv": "16.4.5",
+        "express": "4.19.2",
+        "express-rate-limit": "^8.1.0",
+        "express-validator": "^7.2.1",
+        "mercadopago": "^1.5.17",
+        "mime-types": "2.1.35",
+        "mongodb": "^4.12.1",
+        "pdfkit": "^0.17.2",
+        "qrcode": "^1.5.3",
+        "uuid": "^9.0.1",
+        "wa-sticker-formatter": "4.4.4",
+        "winston": "^3.18.3"
+    },
+    "devDependencies": {
+        "eslint": "^8.52.0",
+        "eslint-plugin-bot-whatsapp": "latest"
+    },
+    "author": "",
+    "license": "ISC"
+}

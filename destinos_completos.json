@@ -1,0 +1,177 @@
+[
+  {
+    "_id": "68e1440f11d71ab3d954d967",
+    "nombre": "Cachi",
+    "categoria": "Valles Calchaquíes",
+    "kmIda": 167,
+    "tipoServicio": "Turismo"
+  },
+  {
+    "_id": "68e1440f11d71ab3d954d968",
+    "nombre": "Purmamarca",
+    "categoria": "Quebrada y Puna",
+    "kmIda": 156,
+    "tipoServicio": "Turismo"
+  },
+  {
+    "_id": "68e1440f11d71ab3d954d969",
+    "nombre": "Salinas Grandes",
+    "categoria": "Quebrada y Puna",
+    "kmIda": 222,
+    "tipoServicio": "Turismo"
+  },
+  {
+    "_id": "68e1440f11d71ab3d954d96a",
+    "nombre": "Tilcara",
+    "categoria": "Quebrada y Puna",
+    "kmIda": 179,
+    "tipoServicio": "Turismo"
+  },
+  {
+    "_id": "68e1440f11d71ab3d954d96b",
+    "nombre": "Humahuaca",
+    "categoria": "Quebrada y Puna",
+    "kmIda": 218,
+    "tipoServicio": "Turismo"
+  },
+  {
+    "_id": "68e1440f11d71ab3d954d96c",
+    "nombre": "Hornocal",
+    "categoria": "Quebrada y Puna",
+    "kmIda": 255,
+    "tipoServicio": "Turismo"
+  },
+  {
+    "_id": "68e1440f11d71ab3d954d96d",
+    "nombre": "Iruya",
+    "categoria": "Quebrada y Puna",
+    "kmIda": 290,
+    "tipoServicio": "Turismo"
+  },
+  {
+    "_id": "68e1440f11d71ab3d954d96e",
+    "nombre": "Ruinas de Quilmes",
+    "categoria": "Otros",
+    "kmIda": 243,
+    "tipoServicio": "Turismo"
+  },
+  {
+    "_id": "68e1440f11d71ab3d954d96f",
+    "nombre": "El Shincal de Quimivil",
+    "categoria": "Otros",
+    "kmIda": 360,
+    "tipoServicio": "Turismo"
+  },
+  {
+    "_id": "68e1440f11d71ab3d954d970",
+    "nombre": "Termas de Fiambalá",
+    "categoria": "Otros",
+    "kmIda": 636,
+    "tipoServicio": "Turismo"
+  },
+  {
+    "_id": "68e1440f11d71ab3d954d971",
+    "nombre": "Centenario-Ratones",
+    "categoria": "Minería",
+    "kmIda": 295,
+    "tipoServicio": "Empresas Mineras"
+  },
+  {
+    "_id": "68e1440f11d71ab3d954d972",
+    "nombre": "Rincon (Salar del Rincón)",
+    "categoria": "Minería",
+    "kmIda": 184,
+    "tipoServicio": "Empresas Mineras"
+  },
+  {
+    "_id": "68e1440f11d71ab3d954d973",
+    "nombre": "Proyecto Mariana",
+    "categoria": "Minería",
+    "kmIda": 280,
+    "tipoServicio": "Empresas Mineras"
+  },
+  {
+    "_id": "68e1440f11d71ab3d954d974",
+    "nombre": "Aeropuerto Martín M. de Güemes",
+    "categoria": "Salta Capital",
+    "kmIda": 12,
+    "tipoServicio": "Urbano Puntual"
+  },
+  {
+    "_id": "68e16cc5d16a41ef0f8e298f",
+    "nombre": "Salta Capital",
+    "categoria": "Salta Capital",
+    "kmIda": 0,
+    "tipoServicio": "Urbano Puntual"
+  },
+  {
+    "_id": "68e16cc5d16a41ef0f8e2990",
+    "nombre": "San Lorenzo",
+    "categoria": "Salta Capital",
+    "kmIda": 15,
+    "tipoServicio": "Urbano Puntual"
+  },
+  {
+    "_id": "68e16cc5d16a41ef0f8e2991",
+    "nombre": "El Carril",
+    "categoria": "Salta Capital",
+    "kmIda": 25,
+    "tipoServicio": "Urbano Puntual"
+  },
+  {
+    "_id": "68e16cc5d16a41ef0f8e2992",
+    "nombre": "La Merced",
+    "categoria": "Salta Capital",
+    "kmIda": 35,
+    "tipoServicio": "Urbano Puntual"
+  },
+  {
+    "_id": "68e16cc6d16a41ef0f8e2997",
+    "nombre": "San Antonio de los Cobres",
+    "categoria": "Quebrada y Puna",
+    "kmIda": 160,
+    "tipoServicio": "Turismo"
+  },
+  {
+    "_id": "68e16cc6d16a41ef0f8e2998",
+    "nombre": "Rincon",
+    "categoria": "Quebrada y Puna",
+    "kmIda": 140,
+    "tipoServicio": "Empresas Mineras"
+  },
+  {
+    "_id": "68e16cc6d16a41ef0f8e299a",
+    "nombre": "Olacapato",
+    "categoria": "Quebrada y Puna",
+    "kmIda": 135,
+    "tipoServicio": "Turismo"
+  },
+  {
+    "_id": "68e16cc6d16a41ef0f8e299d",
+    "nombre": "Molinos",
+    "categoria": "Valles Calchaquíes",
+    "kmIda": 125,
+    "tipoServicio": "Turismo"
+  },
+  {
+    "_id": "68e16cc6d16a41ef0f8e299e",
+    "nombre": "Seclantás",
+    "categoria": "Valles Calchaquíes",
+    "kmIda": 140,
+    "tipoServicio": "Turismo"
+  },
+  {
+    "_id": "68e16cc6d16a41ef0f8e299f",
+    "nombre": "Aeropuerto Martín Miguel de Güemes",
+    "categoria": "Salta Capital",
+    "kmIda": 12,
+    "tipoServicio": "Urbano Puntual"
+  },
+  {
+    "_id": "68e16cc6d16a41ef0f8e29a0",
+    "nombre": "Terminal de Ómnibus",
+    "categoria": "Salta Capital",
+    "kmIda": 8,
+    "tipoServicio": "Urbano Puntual"
+  }
+]
