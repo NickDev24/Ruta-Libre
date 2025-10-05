@@ -5,7 +5,20 @@ let db = null
 
 async function connect({ uri, dbName }) {
   if (db) return db
-  client = new MongoClient(uri, { useUnifiedTopology: true })
+
+  // Parse URI to add authentication if needed for Docker deployment
+  let connectionUri = uri
+  if (!connectionUri.includes('@') && !connectionUri.includes('localhost')) {
+    // Add authentication for production MongoDB
+    const mongoUser = process.env.MONGO_USER || 'rutalibre_app'
+    const mongoPass = process.env.MONGO_PASSWORD || 'secure_app_password'
+    connectionUri = connectionUri.replace('mongodb://', `mongodb://${mongoUser}:${mongoPass}@`)
+  }
+
+  client = new MongoClient(connectionUri, {
+    useUnifiedTopology: true,
+    authSource: 'admin'  // Important for authentication
+  })
   await client.connect()
   db = client.db(dbName)
   await ensureIndexes()
@@ -14,13 +27,18 @@ async function connect({ uri, dbName }) {
 
 async function ensureIndexes() {
   if (!db) return
-  await db.collection('destinos').createIndex({ nombre: 1 }, { unique: true })
-  // Permitir múltiples tarifas por modelo diferenciadas por tipoCliente
-  await db.collection('tarifas').createIndex({ modelo: 1, tipoCliente: 1 }, { unique: true })
-  await db.collection('vehiculos').createIndex({ patente: 1 }, { unique: true })
-  await db.collection('conductores').createIndex({ telefono: 1 }, { unique: true })
-  await db.collection('reservas').createIndex({ estado: 1 })
-  await db.collection('pagos').createIndex({ estado: 1 })
+  try {
+    await db.collection('destinos').createIndex({ nombre: 1 }, { unique: true })
+    // Permitir múltiples tarifas por modelo diferenciadas por tipoCliente
+    await db.collection('tarifas').createIndex({ modelo: 1, tipoCliente: 1 }, { unique: true })
+    await db.collection('vehiculos').createIndex({ patente: 1 }, { unique: true })
+    await db.collection('conductores').createIndex({ telefono: 1 }, { unique: true })
+    await db.collection('reservas').createIndex({ estado: 1 })
+    await db.collection('pagos').createIndex({ estado: 1 })
+    console.log('✅ Índices de base de datos creados correctamente')
+  } catch (error) {
+    console.error('❌ Error creando índices:', error.message)
+  }
 }
 
 function getDB() {

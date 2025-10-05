@@ -77,10 +77,10 @@ function extractCoordsFromText(text) {
  * Declaramos las conexiones de Mongo
  */
 
-const MONGO_DB_URI = process.env.MONGO_DB_URI || 'mongodb+srv://Admin-Clotch:Mikias420@clotch.nge8kuc.mongodb.net/'
-const MONGO_DB_NAME = process.env.MONGO_DB_NAME || 'db_bot'
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'facucercuetti420@gmail.com'
-const ADMIN_PASS = process.env.ADMIN_PASS || 'Mikias420'
+const MONGO_DB_URI = process.env.MONGO_DB_URI || 'mongodb://mongo:27017'
+const MONGO_DB_NAME = process.env.MONGO_DB_NAME || 'rutalibre_prod'
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@rutalibre.com'
+const ADMIN_PASS = process.env.ADMIN_PASS || 'secure_password'
 const ADMIN_PHONE = process.env.ADMIN_PHONE || null // Ej: '5493875XXXXXX@c.us'
 const PUBLIC_URL = process.env.PUBLIC_URL || 'http://localhost:3000'
 
