@@ -9,12 +9,12 @@ ADMIN_PASS=Mikias420
 ADMIN_PHONE=5493872221741
 
 # Public base URL (para links de pago y suscripción)
-PUBLIC_URL=https://tt4mka-ip-181-116-200-176.tunnelmole.net
+PUBLIC_URL=https://salaconecta.online
 
 # Mercado Pago (no SDK, solo referencia)
 MP_PUBLIC_KEY=APP_USR-ba5e98a1-f5e9-4200-9849-0a4cb4656887
 MP_ACCESS_TOKEN=APP_USR-5276551805229948-100418-214fa195f5c264d75f5c02d71f86cec6-2617172074
-MP_WEBHOOK=https://tt4mka-ip-181-116-200-176.tunnelmole.net/api/webhook
+MP_WEBHOOK=https://salaconecta.online/api/webhook
 MP_WEBHOOK_SECRET=7592b489ca18902a55e0fdb1abf8a23c29261a495648100a36147bfef93bdeaa
 # Google Maps
 GOOGLE_MAPS_API_KEY=AIzaSyCGFWR9R_aLByIwB_I4V8MeZOqtxVQdoa4
@@ -22,4 +22,4 @@ GOOGLE_MAPS_API_KEY=AIzaSyCGFWR9R_aLByIwB_I4V8MeZOqtxVQdoa4
 # OpenStreetMap OAuth
 OSM_CLIENT_ID=uULOeRTRxHguXkFLe0X9xM-k2sEyo_XiSjc4q_xPwq8
 OSM_CLIENT_SECRET=zHlXWirpv-YW99sR4yhYVkh4863IF0OgOFdDlfSllwo
-OSM_REDIRECT_URI=https://tt4mka-ip-181-116-200-176.tunnelmole.net
+OSM_REDIRECT_URI=https://salaconecta.online

@@ -1,0 +1,95 @@
+# ============================================================================
+# Docker Compose adicional para SSL con Let's Encrypt
+# ============================================================================
+# Usar con: docker-compose -f docker-compose.yml -f docker-compose.ssl.yml up
+
+version: '3.8'
+
+services:
+  # ============================================================================
+  # Certbot para obtener certificados SSL automáticamente
+  # ============================================================================
+  certbot:
+    image: certbot/certbot:latest
+    container_name: rutalibre-certbot
+    restart: "no"
+
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+      - ./docker/ssl:/app/ssl
+
+    # Configuración de red
+    networks:
+      - rutalibre-network
+
+    # Comando para obtener certificado
+    command: >
+      sh -c "
+        echo '🚀 Iniciando proceso de obtención de certificado SSL...' &&
+        certbot certonly --webroot --webroot-path=/var/www/certbot
+        --email admin@tu-dominio.com --agree-tos --no-eff-email
+        -d tu-dominio.com -d www.tu-dominio.com &&
+        echo '✅ Certificado obtenido exitosamente' &&
+        cp /etc/letsencrypt/live/tu-dominio.com/cert.pem /app/ssl/ &&
+        cp /etc/letsencrypt/live/tu-dominio.com/privkey.pem /app/ssl/key.pem &&
+        echo '✅ Certificados copiados a configuración de Nginx'
+      "
+
+    # Perfiles para ejecución condicional
+    profiles:
+      - ssl
+
+  # ============================================================================
+  # Nginx con configuración SSL mejorada
+  # ============================================================================
+  nginx-ssl:
+    image: nginx:alpine
+    container_name: rutalibre-nginx-ssl
+    restart: unless-stopped
+
+    # Puertos
+    ports:
+      - "80:80"
+      - "443:443"
+
+    # Volúmenes
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./data/certbot/conf:/etc/letsencrypt:ro
+      - ./data/certbot/www:/var/www/certbot:ro
+      - ./docker/ssl:/etc/nginx/ssl:ro
+
+    # Dependencias
+    depends_on:
+      - app
+      - certbot
+
+    # Configuración de red
+    networks:
+      - rutalibre-network
+
+    # Límites de recursos
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
+
+# ============================================================================
+# Instrucciones de uso:
+# ============================================================================
+#
+# 1. Obtener certificado inicial:
+#    docker-compose -f docker-compose.yml -f docker-compose.ssl.yml --profile ssl run certbot
+#
+# 2. Iniciar servicios con SSL:
+#    docker-compose -f docker-compose.yml -f docker-compose.ssl.yml up -d nginx-ssl
+#
+# 3. Configurar renovación automática:
+#    sudo crontab -e
+#    # Agregar: 0 3 * * * docker-compose -f docker-compose.yml -f docker-compose.ssl.yml --profile ssl run certbot
+#
+# ============================================================================

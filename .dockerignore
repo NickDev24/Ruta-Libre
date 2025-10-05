@@ -1,0 +1,70 @@
+# ============================================================================
+# Archivo .dockerignore para optimización de builds
+# ============================================================================
+
+# Git
+.git
+.gitignore
+
+# Documentación
+README.md
+DEPLOYMENT_GUIDE.md
+*.md
+
+# Scripts de desarrollo
+deploy.sh
+backup.sh
+monitor.sh
+init-db.sh
+
+# Logs y temporales
+logs/
+*.log
+temp/
+.tmp/
+
+# Backups
+backups/
+*.backup
+*.tar.gz
+
+# Configuración local
+.env.local
+.env.development
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Node.js
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+node_modules/
+.npm/
+
+# Archivos de prueba
+test/
+tests/
+**/*.test.js
+**/*.spec.js
+
+# Cobertura de pruebas
+coverage/
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# SSL (se copia explícitamente si es necesario)
+docker/ssl/
+
+# Datos de producción (no incluir en imagen)
+data/
+
+# Archivos de configuración de despliegue
+docker-compose.override.yml
+.env
