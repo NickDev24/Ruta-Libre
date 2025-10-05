@@ -8,16 +8,20 @@ async function connect({ uri, dbName }) {
 
   // Parse URI to add authentication if needed for Docker deployment
   let connectionUri = uri
-  if (!connectionUri.includes('@') && !connectionUri.includes('localhost')) {
-    // Add authentication for production MongoDB
-    const mongoUser = process.env.MONGO_USER || 'rutalibre_app'
-    const mongoPass = process.env.MONGO_PASSWORD || 'secure_app_password'
-    connectionUri = connectionUri.replace('mongodb://', `mongodb://${mongoUser}:${mongoPass}@`)
+
+  // Only add authentication if credentials are explicitly provided and not commented
+  const mongoUser = process.env.MONGO_USER
+  const mongoPass = process.env.MONGO_PASSWORD
+
+  if (mongoUser && mongoPass && mongoUser !== 'rutalibre_app' && mongoPass !== 'secure_app_password') {
+    if (!connectionUri.includes('@') && !connectionUri.includes('localhost')) {
+      connectionUri = connectionUri.replace('mongodb://', `mongodb://${mongoUser}:${mongoPass}@`)
+    }
   }
 
   client = new MongoClient(connectionUri, {
     useUnifiedTopology: true,
-    authSource: 'admin'  // Important for authentication
+    authSource: mongoUser && mongoPass ? 'admin' : undefined  // Only set authSource if using auth
   })
   await client.connect()
   db = client.db(dbName)
