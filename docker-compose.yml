@@ -157,19 +157,31 @@ services:
     networks:
       - rutalibre-network
 
-    # Comando para respaldo (simplificado)
-    command: >
-      sh -c "
-        echo 'Iniciando respaldo de MongoDB...' &&
-        mongodump --host \$\$MONGO_HOST --port \$\$MONGO_PORT --db \$\$MONGO_DB --out /backup/\$(date +%Y-%m-%d_%H-%M-%S) &&
-        echo 'Respaldo completado exitosamente' &&
-        find /backup -name '*.bson' -type f -mtime +7 -delete &&
-        echo 'Respaldos antiguos eliminados'
-      "
-
-    # Perfiles para ejecución condicional
-    profiles:
-      - backup
+# ============================================================================
+# Servicio de respaldo automático (opcional) - DESHABILITADO TEMPORALMENTE
+# ============================================================================
+# backup:
+#   image: mongo:6.0-jammy
+#   container_name: rutalibre-backup
+#   restart: "no"
+#   environment:
+#     - MONGO_HOST=mongo
+#     - MONGO_PORT=27017
+#     - MONGO_DB=rutalibre_prod
+#   volumes:
+#     - mongo_data:/data/db:ro
+#     - ./backups:/backup
+#   networks:
+#     - rutalibre-network
+#   command: >
+#     sh -c "
+#       echo 'Iniciando respaldo...' &&
+#       mongodump --host mongo --port 27017 --db rutalibre_prod --out /backup/\$(date +%Y-%m-%d_%H-%M-%S) &&
+#       echo 'Respaldo completado' &&
+#       find /backup -mtime +7 -delete
+#     "
+#   profiles:
+#     - backup
 
 # ============================================================================
 # Volúmenes nombrados para persistencia
