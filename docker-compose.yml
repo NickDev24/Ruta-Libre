@@ -62,11 +62,10 @@ services:
     container_name: rutalibre-mongo
     restart: unless-stopped
 
-    # Variables de entorno
+    # Variables de entorno - Sin autenticación inicial
     environment:
       - MONGO_INITDB_DATABASE=rutalibre_prod
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD:-secure_mongo_password}
+      # Sin usuario root para desarrollo local
 
     # Puertos
     ports:
@@ -106,10 +105,10 @@ services:
     container_name: rutalibre-nginx
     restart: unless-stopped
 
-    # Puertos
+    # Puertos - Cambiados para evitar conflictos
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:80"
+      - "8443:443"
 
     # Volúmenes
     volumes:
