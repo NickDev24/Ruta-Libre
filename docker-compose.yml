@@ -144,7 +144,9 @@ services:
 
     # Variables de entorno
     environment:
-      - MONGO_URI=mongodb://mongo:27017/rutalibre_prod
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+      - MONGO_DB=rutalibre_prod
 
     # Volúmenes
     volumes:
@@ -155,11 +157,11 @@ services:
     networks:
       - rutalibre-network
 
-    # Comando para respaldo
+    # Comando para respaldo (simplificado)
     command: >
       sh -c "
         echo 'Iniciando respaldo de MongoDB...' &&
-        mongodump --uri=\${MONGO_URI} --out=/backup/\$(date +%%Y-%%m-%%d_%%H-%%M-%%S) &&
+        mongodump --host \$\$MONGO_HOST --port \$\$MONGO_PORT --db \$\$MONGO_DB --out /backup/\$(date +%Y-%m-%d_%H-%M-%S) &&
         echo 'Respaldo completado exitosamente' &&
         find /backup -name '*.bson' -type f -mtime +7 -delete &&
         echo 'Respaldos antiguos eliminados'
