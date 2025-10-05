@@ -13,7 +13,15 @@ async function connect({ uri, dbName }) {
   const mongoUser = process.env.MONGO_USER
   const mongoPass = process.env.MONGO_PASSWORD
 
-  if (mongoUser && mongoPass && mongoUser !== 'rutalibre_app' && mongoPass !== 'secure_app_password') {
+  // More strict check - ensure values are not undefined, null, empty, or commented values
+  if (mongoUser &&
+      mongoPass &&
+      mongoUser.trim() !== '' &&
+      mongoPass.trim() !== '' &&
+      !mongoUser.startsWith('#') &&
+      !mongoPass.startsWith('#') &&
+      mongoUser !== 'rutalibre_app' &&
+      mongoPass !== 'secure_app_password') {
     if (!connectionUri.includes('@') && !connectionUri.includes('localhost')) {
       connectionUri = connectionUri.replace('mongodb://', `mongodb://${mongoUser}:${mongoPass}@`)
     }
